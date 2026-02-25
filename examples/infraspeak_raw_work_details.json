@@ -1,0 +1,48 @@
+{
+    "id": "128520663",
+    "type": "scheduled_work",
+    "attributes": {
+        "state": "COMPLETED",
+        "visit": 1,
+        "running": false,
+        "work_id": 2436672,
+        "confirmed": false,
+        "entity_id": 1171,
+        "failure_id": null,
+        "network_id": null,
+        "start_date": "2025-01-10 10:18:34",
+        "updated_at": "2025-01-14 09:48:49",
+        "observation": null,
+        "time_running": "P0Y0M0DT1H7M21S",
+        "complete_date": "2025-01-14 09:48:49",
+        "manpower_cost": "19.86",
+        "next_sla_date": null,
+        "started_by_id": 10955,
+        "completed_date": "2025-01-14 09:48:49",
+        "completed_by_id": 10955,
+        "real_start_date": "2025-01-14 08:41:27",
+        "cost_center_name": null,
+        "schedule_work_id": 128520663,
+        "signature_status": "NOT_SIGNED",
+        "manpower_duration": "P0Y0M0DT1H7M22S",
+        "next_sla_percentage": null,
+        "original_start_date": null,
+        "rescheduled_by_user": false,
+        "completed_percentage": 100,
+        "last_status_change_date": "2025-01-14 09:48:49",
+        "next_scheduled_work_sla_id": null,
+        "last_status_change_operator": "JONADAB DA SILVA SANTOS",
+        "next_scheduled_work_sla_date": null,
+        "next_scheduled_work_sla_status_order": null,
+        "estimated_duration_absolute_deviation": 573,
+        "estimated_duration_relative_deviation": -574
+    },
+    "relationships": {
+        "work": {
+            "data": {
+                "id": "2436672",
+                "type": "work"
+            }
+        }
+    }
+}

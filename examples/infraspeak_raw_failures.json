@@ -1,0 +1,92 @@
+{
+    "id": "15689319",
+    "type": "failure",
+    "attributes": {
+        "uuid": "add9b065-de2b-46c2-8a1d-4ef02fb9bf7e",
+        "state": "COMPLETED",
+        "solved": true,
+        "status": "COMPLETED",
+        "local_id": 661817,
+        "priority": 4,
+        "client_id": 101392,
+        "confirmed": false,
+        "entity_id": 1171,
+        "created_at": "2025-11-29 19:53:11",
+        "failure_id": 15689319,
+        "local_code": "MAGNA.14º ANDAR. APTO 1408",
+        "local_name": "MAGNA PRAIA HOTEL - 14º ANDAR -  APTO 1408",
+        "problem_id": 51015,
+        "updated_at": "2025-11-29 20:02:39",
+        "client_code": "",
+        "client_name": "CARMEL HOTÉIS ()",
+        "description": "AUXILIO COM A TV",
+        "external_id": null,
+        "paused_date": null,
+        "report_date": "2025-11-29 19:53:11",
+        "supplier_id": null,
+        "date_deleted": null,
+        "observations": null,
+        "problem_name": "ELETRODOMÉSTICOS - OUTROS",
+        "started_date": "2025-11-29 19:53:28",
+        "approved_date": "2025-11-29 19:53:28",
+        "gatekeeper_id": null,
+        "manpower_cost": "0.00",
+        "message_count": 0,
+        "next_schedule": null,
+        "next_sla_date": null,
+        "priority_text": "URGENT",
+        "root_local_id": 661093,
+        "started_by_id": 150320,
+        "approved_by_id": 150320,
+        "completed_date": "2025-11-29 20:02:39",
+        "cost_center_id": null,
+        "reported_by_id": 68938,
+        "completed_by_id": 150320,
+        "time_statistics": {
+            "started_date": "2025-11-29 19:53:28",
+            "approved_date": "2025-11-29 19:53:28",
+            "real_duration": "P0Y0M0DT0H8M48S",
+            "time_to_start": "P0Y0M0DT0H0M17S",
+            "time_to_approve": "P0Y0M0DT0H0M17S",
+            "last_paused_date": null,
+            "time_to_complete": "P0Y0M0DT0H9M28S",
+            "last_completed_date": "2025-11-29 20:02:39",
+            "last_paused_description": null,
+            "time_to_start_after_approved": "P0Y0M0DT0H0M0S",
+            "time_to_complete_after_started": "P0Y0M0DT0H9M11S"
+        },
+        "signature_status": "NOT_SIGNED",
+        "manpower_duration": "P0Y0M0DT0H8M49S",
+        "state_description": "hóspede foi informado como funciona a tv ",
+        "network_failure_id": null,
+        "failure_priority_id": 4533,
+        "next_failure_sla_id": null,
+        "next_sla_percentage": null,
+        "next_failure_sla_date": null,
+        "last_status_change_date": "2025-11-29 20:02:39",
+        "failure_original_mapping_id": null,
+        "next_failure_sla_status_order": null
+    },
+    "relationships": {
+        "events": {
+            "data": [
+                {
+                    "id": "215998707",
+                    "type": "event"
+                }
+            ]
+        },
+        "location": {
+            "data": {
+                "id": "661817",
+                "type": "location"
+            }
+        },
+        "operator": {
+            "data": {
+                "id": "10915",
+                "type": "operator"
+            }
+        }
+    }
+}

@@ -1,0 +1,282 @@
+{
+    "id": "15398364",
+    "data": {
+        "id": "15398364",
+        "type": "failure",
+        "attributes": {
+            "uuid": "171d4405-45fa-4ce9-bb3f-26f41bb7f3bd",
+            "state": "COMPLETED",
+            "solved": true,
+            "status": "COMPLETED",
+            "local_id": 661823,
+            "priority": 1,
+            "client_id": 101392,
+            "confirmed": false,
+            "entity_id": 1171,
+            "created_at": "2025-11-10 14:57:19",
+            "failure_id": 15398364,
+            "local_code": "MAGNA.15º ANDAR. APTO 1503",
+            "local_name": "MAGNA PRAIA HOTEL - 15º ANDAR -  APTO 1503",
+            "problem_id": 51242,
+            "updated_at": "2026-02-24 12:58:44",
+            "client_code": "",
+            "client_name": "CARMEL HOTÉIS ()",
+            "description": "Pintura geral ",
+            "external_id": null,
+            "paused_date": "2025-11-14 16:31:13",
+            "report_date": "2025-11-10 14:57:19",
+            "supplier_id": null,
+            "date_deleted": null,
+            "observations": "19/02 -SERVIÇO SERÁ REALIZADO DE ACORDO COM A DISPONIBILIDADE",
+            "problem_name": "INFRAESTRUTURA - OUTROS",
+            "started_date": "2025-11-14 16:31:12",
+            "approved_date": "2025-11-11 19:06:31",
+            "gatekeeper_id": null,
+            "manpower_cost": "0.00",
+            "message_count": 0,
+            "next_schedule": null,
+            "next_sla_date": null,
+            "priority_text": "LOW",
+            "root_local_id": 661093,
+            "started_by_id": 90762,
+            "approved_by_id": 90762,
+            "completed_date": "2026-02-24 12:58:44",
+            "cost_center_id": null,
+            "reported_by_id": 167142,
+            "completed_by_id": 90762,
+            "time_statistics": {
+                "started_date": "2025-11-14 16:31:12",
+                "approved_date": "2025-11-11 19:06:31",
+                "real_duration": "P0Y0M0DT0H0M1S",
+                "time_to_start": "P0Y0M4DT1H33M53S",
+                "time_to_approve": "P0Y0M1DT4H9M12S",
+                "last_paused_date": "2025-11-14 16:31:13",
+                "time_to_complete": "P0Y3M16DT22H1M25S",
+                "last_completed_date": "2026-02-24 12:58:44",
+                "last_paused_description": null,
+                "time_to_start_after_approved": "P0Y0M2DT21H24M41S",
+                "time_to_complete_after_started": "P0Y3M12DT20H27M32S"
+            },
+            "signature_status": "NOT_SIGNED",
+            "manpower_duration": "P0Y0M0DT0H0M1S",
+            "state_description": null,
+            "network_failure_id": null,
+            "failure_priority_id": 4530,
+            "next_failure_sla_id": null,
+            "next_sla_percentage": null,
+            "next_failure_sla_date": null,
+            "last_status_change_date": "2026-02-24 12:58:44",
+            "failure_original_mapping_id": null,
+            "next_failure_sla_status_order": null
+        },
+        "relationships": {
+            "client": {
+                "data": {
+                    "id": "101392",
+                    "type": "client"
+                }
+            },
+            "events": {
+                "data": [
+                    {
+                        "id": "213882928",
+                        "type": "event"
+                    }
+                ]
+            },
+            "problem": {
+                "data": {
+                    "id": "51242",
+                    "type": "problem_type"
+                }
+            },
+            "location": {
+                "data": {
+                    "id": "661823",
+                    "type": "location"
+                }
+            },
+            "operator": {
+                "data": {
+                    "id": "10915",
+                    "type": "operator"
+                }
+            }
+        }
+    },
+    "included": [
+        {
+            "id": "334369399",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2025-11-14 16:31:12",
+                "action": "CREATED",
+                "event_id": 213882928,
+                "operator_id": 90762,
+                "date_updated": "2025-11-14 16:31:12",
+                "event_registry_id": 334369399
+            }
+        },
+        {
+            "id": "334369400",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2025-11-14 16:31:12",
+                "action": "STARTED",
+                "event_id": 213882928,
+                "operator_id": 90762,
+                "date_updated": "2025-11-14 16:31:12",
+                "event_registry_id": 334369400
+            }
+        },
+        {
+            "id": "334369403",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2025-11-14 16:31:13",
+                "action": "PAUSED",
+                "event_id": 213882928,
+                "operator_id": 90762,
+                "date_updated": "2025-11-14 16:31:13",
+                "event_registry_id": 334369403
+            }
+        },
+        {
+            "id": "362581586",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2026-02-24 12:58:44",
+                "action": "COMPLETED",
+                "event_id": 213882928,
+                "operator_id": 90762,
+                "date_updated": "2026-02-24 12:58:44",
+                "event_registry_id": 362581586
+            }
+        },
+        {
+            "id": "101392",
+            "type": "client",
+            "attributes": {
+                "nif": "",
+                "city": "",
+                "code": "",
+                "name": "CARMEL HOTÉIS",
+                "address": "",
+                "country": "",
+                "client_id": 101392,
+                "created_at": null,
+                "my_company": true,
+                "updated_at": "2025-10-29T11:01:56.000000Z",
+                "client_uuid": "685ec6f4-0aae-4098-8696-63fe488edbcb",
+                "postal_code": "",
+                "observations": ""
+            }
+        },
+        {
+            "id": "213882928",
+            "type": "event",
+            "attributes": {
+                "status": "COMPLETED",
+                "planned": false,
+                "work_id": null,
+                "end_date": null,
+                "event_id": 213882928,
+                "operator": null,
+                "failure_id": 15398364,
+                "start_date": "2025-11-14 16:31:12",
+                "external_id": null,
+                "observation": null,
+                "operator_id": 90762,
+                "manpower_cost": 0,
+                "schedule_work_id": null,
+                "manpower_duration": "P0Y0M0DT0H0M1S",
+                "last_status_change_date": "2026-02-24 12:58:44",
+                "manually_changed_duration": false
+            },
+            "relationships": {
+                "registry": {
+                    "data": [
+                        {
+                            "id": "334369399",
+                            "type": "event_registry"
+                        },
+                        {
+                            "id": "334369400",
+                            "type": "event_registry"
+                        },
+                        {
+                            "id": "334369403",
+                            "type": "event_registry"
+                        },
+                        {
+                            "id": "362581586",
+                            "type": "event_registry"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "661823",
+            "type": "location",
+            "attributes": {
+                "area": null,
+                "code": " APTO 1503",
+                "name": " APTO 1503",
+                "volume": null,
+                "local_id": 661823,
+                "entity_id": 1171,
+                "full_code": "MAGNA.15º ANDAR. APTO 1503",
+                "full_name": "MAGNA PRAIA HOTEL - 15º ANDAR -  APTO 1503",
+                "parent_id": 661602,
+                "glass_area": null,
+                "local_uuid": "deec067e-20ac-4ee3-99a5-f6c81c7f7469",
+                "observation": null,
+                "orientation": null,
+                "date_deleted": null,
+                "date_updated": "2024-04-10 14:00:29",
+                "root_parent_id": 661093,
+                "is_from_network": false
+            }
+        },
+        {
+            "id": "10915",
+            "type": "operator",
+            "attributes": {
+                "email": "carmelhoteis.com.br+gear@infraspeak.com",
+                "phone": "0",
+                "account": "admin",
+                "language": "pt_br",
+                "timezone": "Europe/Lisbon",
+                "cellphone": "0",
+                "entity_id": 1171,
+                "full_name": "Gear",
+                "created_at": "2020-12-01T12:51:02.000000Z",
+                "calendar_id": null,
+                "operator_id": 10915,
+                "warehouse_id": 3841,
+                "cost_per_hour": 0,
+                "operator_uuid": "ab69a4e9-515d-4c9a-a2d3-4e68e78154fe",
+                "is_from_network": false,
+                "phone_country_code": null,
+                "follows_default_calendar": true
+            }
+        },
+        {
+            "id": "51242",
+            "type": "problem_type",
+            "attributes": {
+                "name": "OUTROS",
+                "entity_id": 1171,
+                "full_name": "INFRAESTRUTURA - OUTROS",
+                "parent_id": 51231,
+                "created_at": null,
+                "problem_id": 51242,
+                "updated_at": "2025-08-25T13:57:17.000000Z",
+                "description": "",
+                "date_deleted": null,
+                "is_from_network": false
+            }
+        }
+    ]
+}

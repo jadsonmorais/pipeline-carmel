@@ -1,0 +1,48 @@
+{
+    "id": "72774826",
+    "type": "scheduled_work",
+    "attributes": {
+        "state": "COMPLETED",
+        "visit": 11,
+        "running": false,
+        "work_id": 511611,
+        "confirmed": false,
+        "entity_id": 1171,
+        "failure_id": null,
+        "network_id": null,
+        "start_date": "2026-11-01 09:00:00",
+        "updated_at": "2024-08-10 21:10:32",
+        "observation": null,
+        "time_running": "P0Y0M0DT1H54M15S",
+        "complete_date": "2024-04-04 19:52:40",
+        "manpower_cost": "18.39",
+        "next_sla_date": null,
+        "started_by_id": 28437,
+        "completed_date": "2024-04-04 19:52:40",
+        "completed_by_id": 28437,
+        "real_start_date": "2024-04-04 17:58:25",
+        "cost_center_name": null,
+        "schedule_work_id": 72774826,
+        "signature_status": "NOT_SIGNED",
+        "manpower_duration": "P0Y0M0DT1H54M15S",
+        "next_sla_percentage": null,
+        "original_start_date": "2026-11-01 09:00:00",
+        "rescheduled_by_user": false,
+        "completed_percentage": 100,
+        "last_status_change_date": "2024-04-04 19:52:40",
+        "next_scheduled_work_sla_id": null,
+        "last_status_change_operator": "HELIO FERREIRA DOS SANTOS",
+        "next_scheduled_work_sla_date": null,
+        "next_scheduled_work_sla_status_order": null,
+        "estimated_duration_absolute_deviation": 0,
+        "estimated_duration_relative_deviation": 0
+    },
+    "relationships": {
+        "work": {
+            "data": {
+                "id": "511611",
+                "type": "work"
+            }
+        }
+    }
+}
