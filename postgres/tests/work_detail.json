@@ -1,0 +1,370 @@
+{
+    "id": "78419106",
+    "data": {
+        "id": "78419106",
+        "type": "scheduled_work",
+        "attributes": {
+            "state": "COMPLETED",
+            "visit": 1,
+            "running": false,
+            "work_id": 445597,
+            "confirmed": false,
+            "entity_id": 1171,
+            "failure_id": null,
+            "network_id": null,
+            "start_date": "2025-02-26 08:00:00",
+            "updated_at": "2025-02-26 12:44:42",
+            "observation": null,
+            "time_running": "P0Y0M0DT0H20M16S",
+            "complete_date": "2025-02-26 12:44:42",
+            "manpower_cost": "3.99",
+            "next_sla_date": null,
+            "started_by_id": 11028,
+            "completed_date": "2025-02-26 12:44:42",
+            "completed_by_id": 11028,
+            "real_start_date": "2025-02-26 12:24:25",
+            "cost_center_name": null,
+            "schedule_work_id": 78419106,
+            "signature_status": "NOT_SIGNED",
+            "manpower_duration": "P0Y0M0DT0H20M17S",
+            "next_sla_percentage": null,
+            "original_start_date": "2025-02-26 08:00:00",
+            "rescheduled_by_user": false,
+            "completed_percentage": 100,
+            "last_status_change_date": "2025-02-26 12:44:42",
+            "next_scheduled_work_sla_id": null,
+            "last_status_change_operator": "LINDOMAR MOURA FERNANDES",
+            "next_scheduled_work_sla_date": null,
+            "next_scheduled_work_sla_status_order": null,
+            "estimated_duration_absolute_deviation": 1,
+            "estimated_duration_relative_deviation": -2
+        },
+        "relationships": {
+            "work": {
+                "data": {
+                    "id": "445597",
+                    "type": "work"
+                }
+            },
+            "events": {
+                "data": [
+                    {
+                        "id": "95066793",
+                        "type": "event"
+                    },
+                    {
+                        "id": "171442698",
+                        "type": "event"
+                    }
+                ]
+            },
+            "audit_stats": {
+                "data": [
+                    {
+                        "id": "69a08190bc9888.71681935",
+                        "type": "audit_stats"
+                    }
+                ]
+            }
+        }
+    },
+    "included": [
+        {
+            "id": "153175020",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2024-01-18 12:56:55",
+                "action": "CREATED",
+                "event_id": 95066793,
+                "operator_id": 57492,
+                "date_updated": "2024-01-18 12:56:55",
+                "event_registry_id": 153175020
+            }
+        },
+        {
+            "id": "263461393",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2025-02-26 12:24:26",
+                "action": "STARTED",
+                "event_id": 95066793,
+                "operator_id": 11028,
+                "date_updated": "2025-02-26 12:24:26",
+                "event_registry_id": 263461393
+            }
+        },
+        {
+            "id": "263465462",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2025-02-26 12:44:42",
+                "action": "COMPLETED",
+                "event_id": 95066793,
+                "operator_id": 11028,
+                "date_updated": "2025-02-26 12:44:42",
+                "event_registry_id": 263465462
+            }
+        },
+        {
+            "id": "263461390",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2025-02-26 12:24:25",
+                "action": "CREATED",
+                "event_id": 171442698,
+                "operator_id": 11028,
+                "date_updated": "2025-02-26 12:24:25",
+                "event_registry_id": 263461390
+            }
+        },
+        {
+            "id": "263461391",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2025-02-26 12:24:25",
+                "action": "STARTED",
+                "event_id": 171442698,
+                "operator_id": 11028,
+                "date_updated": "2025-02-26 12:24:25",
+                "event_registry_id": 263461391
+            }
+        },
+        {
+            "id": "263465464",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2025-02-26 12:44:43",
+                "action": "COMPLETED",
+                "event_id": 171442698,
+                "operator_id": 11028,
+                "date_updated": "2025-02-26 12:44:43",
+                "event_registry_id": 263465464
+            }
+        },
+        {
+            "id": "101392",
+            "type": "client",
+            "attributes": {
+                "nif": "",
+                "city": "",
+                "code": "",
+                "name": "CARMEL HOTÉIS",
+                "address": "",
+                "country": "",
+                "client_id": 101392,
+                "created_at": null,
+                "my_company": true,
+                "updated_at": "2025-10-29T11:01:56.000000Z",
+                "client_uuid": "685ec6f4-0aae-4098-8696-63fe488edbcb",
+                "postal_code": "",
+                "observations": ""
+            }
+        },
+        {
+            "id": "676912",
+            "type": "location",
+            "attributes": {
+                "area": null,
+                "code": "CC",
+                "name": "Checklist CUMBUCO",
+                "volume": null,
+                "local_id": 676912,
+                "entity_id": 1171,
+                "full_code": "WIND.CC",
+                "full_name": "CARMEL CUMBUCO - Checklist CUMBUCO",
+                "parent_id": 661091,
+                "glass_area": null,
+                "local_uuid": "50436d74-7584-46ae-9d70-945d68d4458f",
+                "observation": "",
+                "orientation": null,
+                "date_deleted": null,
+                "date_updated": "2025-03-01 16:29:57",
+                "root_parent_id": 661091,
+                "is_from_network": false
+            }
+        },
+        {
+            "id": "8759",
+            "type": "work_type",
+            "attributes": {
+                "code": "AUDIT",
+                "name": "Auditoria",
+                "type": "PREVENTIVE",
+                "work_type_id": 8759
+            }
+        },
+        {
+            "id": "53998",
+            "type": "category",
+            "attributes": {
+                "code": "CUMBUCO",
+                "name": "CUMBUCO",
+                "type": "SOFT_MAINTENANCE",
+                "is_real": true,
+                "entity_id": 1171,
+                "full_code": "CV.CUMBUCO",
+                "parent_id": 53550,
+                "created_at": null,
+                "updated_at": null,
+                "category_id": 53998,
+                "has_children": false,
+                "is_from_network": false,
+                "all_technical_skills": true
+            }
+        },
+        {
+            "id": "95066793",
+            "type": "event",
+            "attributes": {
+                "status": "COMPLETED",
+                "planned": false,
+                "work_id": 445597,
+                "end_date": null,
+                "event_id": 95066793,
+                "operator": null,
+                "failure_id": null,
+                "start_date": "2025-02-26 08:00:00",
+                "external_id": null,
+                "observation": null,
+                "operator_id": null,
+                "manpower_cost": 0,
+                "schedule_work_id": 78419106,
+                "manpower_duration": "P0Y0M0DT0H20M16S",
+                "last_status_change_date": "2025-02-26 12:44:42",
+                "manually_changed_duration": false
+            },
+            "relationships": {
+                "registry": {
+                    "data": [
+                        {
+                            "id": "153175020",
+                            "type": "event_registry"
+                        },
+                        {
+                            "id": "263461393",
+                            "type": "event_registry"
+                        },
+                        {
+                            "id": "263465462",
+                            "type": "event_registry"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "171442698",
+            "type": "event",
+            "attributes": {
+                "status": "COMPLETED",
+                "planned": false,
+                "work_id": 445597,
+                "end_date": null,
+                "event_id": 171442698,
+                "operator": null,
+                "failure_id": null,
+                "start_date": "2025-02-26 12:24:25",
+                "external_id": null,
+                "observation": null,
+                "operator_id": 11028,
+                "manpower_cost": 3.99,
+                "schedule_work_id": 78419106,
+                "manpower_duration": "P0Y0M0DT0H20M18S",
+                "last_status_change_date": "2025-02-26 12:44:43",
+                "manually_changed_duration": false
+            },
+            "relationships": {
+                "registry": {
+                    "data": [
+                        {
+                            "id": "263461390",
+                            "type": "event_registry"
+                        },
+                        {
+                            "id": "263461391",
+                            "type": "event_registry"
+                        },
+                        {
+                            "id": "263465464",
+                            "type": "event_registry"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "445597",
+            "type": "work",
+            "attributes": {
+                "name": "CUMBUCO - CHECKLIST ETE",
+                "type": "CYCLIC",
+                "work_id": 445597,
+                "client_id": 101392,
+                "entity_id": 1171,
+                "auto_close": true,
+                "auto_pilot": true,
+                "failure_id": null,
+                "recurrence": {
+                    "FREQ": "DAILY",
+                    "UNTIL": "2029-12-31 23:59:59",
+                    "DTSTART": "2024-01-18 08:00:00",
+                    "INTERVAL": 1
+                },
+                "calendar_id": null,
+                "description": null,
+                "periodicity": "Todos os dias",
+                "supplier_id": null,
+                "date_deleted": null,
+                "is_protected": false,
+                "work_type_id": 8759,
+                "gatekeeper_id": null,
+                "cost_center_id": null,
+                "any_responsible": true,
+                "network_work_id": null
+            },
+            "relationships": {
+                "client": {
+                    "data": {
+                        "id": "101392",
+                        "type": "client"
+                    }
+                },
+                "locations": {
+                    "data": [
+                        {
+                            "id": "676912",
+                            "type": "location"
+                        }
+                    ]
+                },
+                "operators": {
+                    "data": []
+                },
+                "work_type": {
+                    "data": {
+                        "id": "8759",
+                        "type": "work_type"
+                    }
+                }
+            }
+        },
+        {
+            "id": "69a08190bc9888.71681935",
+            "type": "audit_stats",
+            "attributes": {
+                "max_value": 39,
+                "category_id": 53998,
+                "current_value": 13,
+                "current_max_value": 39
+            },
+            "relationships": {
+                "category": {
+                    "data": {
+                        "id": "53998",
+                        "type": "category"
+                    }
+                }
+            }
+        }
+    ]
+}

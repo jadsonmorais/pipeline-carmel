@@ -1,5 +1,5 @@
-import api_v2
-import utils_v2
+import api
+import utils
 import json
 import time
 
@@ -50,7 +50,7 @@ class InfraspeakExtractor:
                 response['id'] = response['data']['id']
                 
                 # Persistência Bruta (Objetivo 1) [8]
-                utils_v2.upsert_raw_data(table_name, id_column, [response], resource_type)
+                utils.upsert_raw_data(table_name, id_column, [response], resource_type)
                 
                 # Pequena pausa para evitar sobrecarga de conexão (SSL Error) e respeitar o Throttling [9, 10]
                 time.sleep(0.4) 
@@ -60,42 +60,6 @@ class InfraspeakExtractor:
                 continue
         
         print(f"Sincronização de detalhes de {resource_type} concluída.")
-
-# class InfraspeakExtractor:
-#     def __init__(self, api_client):
-#         self.api = api_client
-
-#     def sync_details(self, ids, resource_type, include_records=True):
-#         """
-#         id_column: 'failure_id' ou 'work_id'
-#         table_name: 'infraspeak_raw_failure_details' ou 'infraspeak_raw_work_details'
-#         """
-#         table = f"infraspeak_raw_{resource_type}_details"
-#         id_col = f"{resource_type}_id"
-        
-#         # Expansões baseadas no tipo de recurso
-#         if resource_type == 'failure':
-#             expansion = "operator,location,client,problem"
-#             endpoint_prefix = "failures"
-#         else:
-#             expansion = "work.client,work.locations,work.operators,work.work_type,audit_stats.category"
-#             endpoint_prefix = "works/scheduled"
-
-#         if include_records:
-#             expansion += ",events.registry"
-
-#         for r_id in ids:
-#             try:
-#                 params = {"expanded": expansion}
-#                 response = self.api.request(f"{endpoint_prefix}/{r_id}", params)
-                
-#                 # Prepara para o Upsert
-#                 response['id'] = response['data']['id']
-#                 utils_v2.upsert_raw_data(table, id_col, [response], resource_type)
-                
-#                 utils_v2.time.sleep(0.5) # Proteção contra SSLError e Throttling
-#             except Exception as e:
-#                 print(f"Erro no detalhe {resource_type} {r_id}: {e}")
 
 
     def sync_all_failure_details(self, failure_ids):
@@ -114,7 +78,7 @@ class InfraspeakExtractor:
                 response['id'] = response['data']['id']
                 
                 # Salva o JSON completo (incluindo o nó 'included' com os registros) [3, 10]
-                utils_v2.upsert_raw_data(
+                utils.upsert_raw_data(
                     table_name='infraspeak_raw_failure_details', 
                     id_column='failure_id', 
                     data_list=[response], 
@@ -123,15 +87,6 @@ class InfraspeakExtractor:
             except Exception as e:
                 print(f"Erro ao processar detalhes do ID {f_id}: {e}")
 
-    # def sync_future_works(self, days=30):
-    #     """Busca agendamentos futuros para resolver o Problema 2 [11]"""
-    #     endpoint, params = api_v2.RouteManager.get_works_future(days)
-    #     response = self.api.request(endpoint, params)
-    #     data = response.get('data', [])
-        
-    #     if data:
-    #         utils_v2.upsert_raw_data('infraspeak_raw_works', 'work_id', data, 'work')
-    #         print(f"Sincronizados {len(data)} trabalhos futuros.")
 
     def sync_works_bulk(self, date_start, date_end=None):
         """Busca a lista de ocorrências (Scheduled Works) do período"""
@@ -152,7 +107,7 @@ class InfraspeakExtractor:
         
         if data:
             # Salva o bulk básico na tabela de listagem [6]
-            utils_v2.upsert_raw_data('infraspeak_raw_works', 'work_id', data, 'work')
+            utils.upsert_raw_data('infraspeak_raw_works', 'work_id', data, 'work')
             return data
         return []
 
@@ -174,7 +129,7 @@ class InfraspeakExtractor:
                 
                 # Persistência Bruta: Agora o JSON terá o nó 'included' populado
                 response['id'] = response['data']['id']
-                utils_v2.upsert_raw_data('infraspeak_raw_work_details', 'work_id', [response], 'work')
+                utils.upsert_raw_data('infraspeak_raw_work_details', 'work_id', [response], 'work')
                 
             except Exception as e:
                 print(f"Erro ao detalhar ocorrência {sw_id}: {e}")

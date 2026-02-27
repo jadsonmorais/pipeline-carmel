@@ -1,6 +1,6 @@
 import requests
 import time
-import utils_v2 as utils
+import utils as utils
 
 class ApiInfraspeak:
     def __init__(self, user, token):
@@ -89,6 +89,27 @@ class RouteManager:
             "limit": 200
         }
 
+    
+    @staticmethod
+    def get_failures_bulk(date_start, date_end=None):
+        # Busca falhas com expansão de eventos para evitar chamadas extras [5, 6]
+        params = {
+            "date_min_last_status_change_date": f"{date_start}T00:00:00",
+            "expanded": "events,operator,location", 
+            "limit": 200
+        }
+        if date_end:
+            params["date_max_last_status_change_date"] = f"{date_end}T23:59:59"
+        return "failures", params
+    
+    @staticmethod
+    def get_open_failures():
+        # Retorna o endpoint específico para abertos com expansões básicas, excluindo 'events'
+        params = {
+            "expanded": "operator,location,client,problem", # Sem events.registry para ser rápido
+            "limit": 200
+        }
+        return "failures/open", params
 #     @staticmethod
 #     def get_scheduled_works_delta(date_start):
 #         """Captura mudanças recentes (passado) em ocorrências agendadas [6, 7]"""
@@ -108,18 +129,6 @@ class RouteManager:
 #             "limit": 200,
 #             "sort": "start_date"
 #         }
-    
-    @staticmethod
-    def get_failures_bulk(date_start, date_end=None):
-        # Busca falhas com expansão de eventos para evitar chamadas extras [5, 6]
-        params = {
-            "date_min_last_status_change_date": f"{date_start}T00:00:00",
-            "expanded": "events,operator,location", 
-            "limit": 200
-        }
-        if date_end:
-            params["date_max_last_status_change_date"] = f"{date_end}T23:59:59"
-        return "failures", params
 
 #     @staticmethod
 #     def get_works_future(days_ahead=30):
@@ -131,12 +140,3 @@ class RouteManager:
 #             "limit": 200
 #         }
 #         return "works/scheduled", params
-    
-#     @staticmethod
-#     def get_open_failures():
-#         # Retorna o endpoint específico para abertos com expansões básicas, excluindo 'events'
-#         params = {
-#             "expanded": "operator,location,client,problem", # Sem events.registry para ser rápido
-#             "limit": 200
-#         }
-#         return "failures/open", params

@@ -1,0 +1,48 @@
+{
+    "id": "29834518",
+    "type": "scheduled_work",
+    "attributes": {
+        "state": "ARCHIVED",
+        "visit": 1,
+        "running": false,
+        "work_id": 680429,
+        "confirmed": false,
+        "entity_id": 1171,
+        "failure_id": null,
+        "network_id": null,
+        "start_date": "2024-06-18 12:00:00",
+        "updated_at": "2024-08-06 23:17:04",
+        "observation": null,
+        "time_running": null,
+        "complete_date": null,
+        "manpower_cost": null,
+        "next_sla_date": null,
+        "started_by_id": null,
+        "completed_date": null,
+        "completed_by_id": null,
+        "real_start_date": null,
+        "cost_center_name": null,
+        "schedule_work_id": 29834518,
+        "signature_status": "NOT_SIGNED",
+        "manpower_duration": null,
+        "next_sla_percentage": null,
+        "original_start_date": "2024-06-18 12:00:00",
+        "rescheduled_by_user": false,
+        "completed_percentage": 0,
+        "last_status_change_date": "2024-06-19 12:00:17",
+        "next_scheduled_work_sla_id": null,
+        "last_status_change_operator": null,
+        "next_scheduled_work_sla_date": null,
+        "next_scheduled_work_sla_status_order": null,
+        "estimated_duration_absolute_deviation": null,
+        "estimated_duration_relative_deviation": null
+    },
+    "relationships": {
+        "work": {
+            "data": {
+                "id": "680429",
+                "type": "work"
+            }
+        }
+    }
+}

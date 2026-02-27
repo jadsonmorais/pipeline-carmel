@@ -1,12 +1,12 @@
-from api_v2 import RouteManager, ApiInfraspeak
-import utils_v2
-import extractor_v2 as extractor # Importa o módulo
+from api import RouteManager, ApiInfraspeak
+import utils
+import extractor as extractor # Importa o módulo
 import os
 from datetime import datetime, timedelta
-from utils_v2 import load_dotenv
+from utils import load_dotenv
 
 # Carrega as credenciais do ambiente (.env)
-load_dotenv(utils_v2.FILE_AUTH)
+load_dotenv(utils.FILE_AUTH)
 
 def run_daily_sync():
     # 1. Inicialização das Credenciais e Objetos (O QUE ESTAVA FALTANDO)

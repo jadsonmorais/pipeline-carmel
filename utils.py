@@ -11,6 +11,7 @@ import os
 from dotenv import load_dotenv
 import psycopg2
 from psycopg2.extras import execute_values
+import time
 
 FOLDER_DATA_PROD = Path('H:/Meu Drive') / 'data'
 FOLDER_DATA_TEST = FOLDER_DATA = Path(__file__).parent / 'data'
