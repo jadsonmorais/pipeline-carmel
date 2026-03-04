@@ -9,57 +9,50 @@ class InfraspeakExtractor:
         self.api = api_client
 
     def sync_details(self, ids, resource_type, include_records=True):
-        """
-        Método unificado para buscar detalhes de Falhas ou Trabalhos.
-        ids: Lista de IDs vindos do Bulk.
-        resource_type: 'failure' ou 'work'.
-        include_records: Define se deve trazer o events.registry (pesado).
-        """
+        """Método unificado para buscar detalhes de Falhas, Trabalhos ou Ocorrências."""
         if not ids:
-            print(f"Nenhum ID de {resource_type} para processar.")
             return
 
         print(f"Iniciando extração detalhada de {len(ids)} {resource_type}s...")
 
-        # Configurações dinâmicas conforme o tipo de recurso
         if resource_type == 'failure':
             endpoint_prefix = "failures"
             table_name = "infraspeak_raw_failure_details"
             id_column = "failure_id"
-            # Expansões para Falhas [1, 2]
             expansion = "operator,location,client,problem"
-        else:
-            endpoint_prefix = "works/scheduled"
+            if include_records: expansion += ",events.registry"
+
+        elif resource_type == 'work': # Entidade Mestre
+            endpoint_prefix = "works"
             table_name = "infraspeak_raw_work_details"
             id_column = "work_id"
-            # Expansões para Works/Scheduled [3, 4]
-            expansion = "work.client,work.locations,work.operators,work.work_type,audit_stats.category"
+            # O Mestre não possui log de eventos diários, apenas regras gerais
+            expansion = "workPeriodicity,workSlaRules,workType,client,locations,operators" 
 
-        # Adiciona registros apenas se solicitado (Lógica do Ano Atual/Delta)
-        if include_records:
-            expansion += ",events.registry"
+        elif resource_type == 'scheduled_work': # Ocorrência / Instância
+            endpoint_prefix = "works/scheduled"
+            table_name = "infraspeak_raw_scheduled_work_details"
+            id_column = "scheduled_work_id"
+            expansion = "work.client,work.locations,work.operators,work.work_type,audit_stats.category"
+            if include_records: expansion += ",events.registry"
+
+        else:
+            print("Tipo não suportado.")
+            return
 
         for r_id in ids:
             try:
                 params = {"expanded": expansion}
-                # Chama o método request da classe ApiInfraspeak [5, 6]
                 response = self.api.request(f"{endpoint_prefix}/{r_id}", params)
-                
-                # Prepara o JSON para o Upsert no Postgres [7]
-                # O banco espera uma lista de dicionários com 'id' e o objeto completo
                 response['id'] = response['data']['id']
                 
-                # Persistência Bruta (Objetivo 1) [8]
+                # O parâmetro resource_type forma as chaves foreign key perfeitamente graças ao utils.py
                 utils.upsert_raw_data(table_name, id_column, [response], resource_type)
-                
-                # Pequena pausa para evitar sobrecarga de conexão (SSL Error) e respeitar o Throttling [9, 10]
                 time.sleep(0.4) 
                 
             except Exception as e:
                 print(f" [ERRO] Falha ao detalhar {resource_type} {r_id}: {e}")
                 continue
-        
-        print(f"Sincronização de detalhes de {resource_type} concluída.")
 
 
     def sync_all_failure_details(self, failure_ids):

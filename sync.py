@@ -1,48 +1,65 @@
-from api import RouteManager, ApiInfraspeak
+import api
 import utils
-import extractor as extractor # Importa o módulo
+import extractor
 import os
 from datetime import datetime, timedelta
-from utils import load_dotenv
 
-# Carrega as credenciais do ambiente (.env)
-load_dotenv(utils.FILE_AUTH)
+# Carrega as credenciais
+utils.load_dotenv(utils.FILE_AUTH)
 
-def run_daily_sync():
-    # 1. Inicialização das Credenciais e Objetos (O QUE ESTAVA FALTANDO)
+def run_incremental_sync(days_back=3, include_records=True):
+    date_start = (datetime.now() - timedelta(days=days_back)).strftime('%Y-%m-%d')
+    print(f"--- Iniciando Carga Incremental (Delta) a partir de {date_start} ---")
+    
     user = os.getenv('API_DATA_USER')
     token = os.getenv('API_DATA_TOKEN')
-    
-    # Inicializa a conexão com a API [1]
-    api_client = ApiInfraspeak(user, token)
-    
-    # Inicializa o extrator (passando o cliente da API)
-    # Certifique-se de que a classe no extractor_v2 se chama InfraspeakExtractor
-    ext = extractor.InfraspeakExtractor(api_client)
-    
-    # 2. Configuração de Datas
-    hoje = datetime.now()
-    tres_dias_atras = (hoje - timedelta(days=3)).strftime('%Y-%m-%d')
-    
-    # 3. FAILURES (3 dias atrás com registros)
-    print("Sincronizando Failures (Delta 3 dias + Registros)...")
-    endpoint, params = RouteManager.get_failures_delta(tres_dias_atras)
-    # Usamos o objeto api_client inicializado acima
-    failures = api_client.request(endpoint, params).get('data', [])
-    # Usamos o objeto 'ext' inicializado acima
-    ext.sync_details([f['id'] for f in failures], 'failure', include_records=True)
+    api_client = api.ApiInfraspeak(user, token)
+    extract = extractor.InfraspeakExtractor(api_client)
 
-    # 4. SCHEDULED WORKS - DELTA (3 dias atrás com registros)
-    print("Sincronizando Scheduled Works (Delta 3 dias + Registros)...")
-    endpoint, params = RouteManager.get_scheduled_works_delta(tres_dias_atras)
-    works_delta = api_client.request(endpoint, params).get('data', [])
-    ext.sync_details([w['id'] for w in works_delta], 'work', include_records=True)
+    # 1. FAILURES
+    print("\n>>> Sincronizando Failures recentes...")
+    f_params = {
+        "date_min_last_status_change_date": f"{date_start}T00:00:00",
+        "expanded": "events,operator,location",
+        "limit": 200
+    }
+    f_data = api_client.request_all_pages("failures", f_params) 
+    if f_data:
+        utils.upsert_raw_data('infraspeak_raw_failures', 'failure_id', f_data, 'failure')
+        if include_records:
+            f_ids = [f['id'] for f in f_data]
+            extract.sync_details(f_ids, 'failure', include_records=True)
 
-    # 5. SCHEDULED WORKS - FUTURE (Bulk sem registros - Performance)
-    print("Sincronizando Scheduled Works (Futuro - Sem Registros)...")
-    endpoint, params = RouteManager.get_scheduled_works_future()
-    works_future = api_client.request(endpoint, params).get('data', [])
-    ext.sync_details([w['id'] for w in works_future], 'work', include_records=False)
+    # 2. WORKS (PLANOS MESTRES) - Parâmetro validado: date_min_updated_at
+    print("\n>>> Sincronizando Works (Planos Mestres) recentes...")
+    w_params = {
+        "date_min_updated_at": f"{date_start}T00:00:00",
+        "expanded": "workPeriodicity,workSlaRules,workType,client,locations",
+        "limit": 200
+    }
+    w_data = api_client.request_all_pages("works", w_params)
+    if w_data:
+        utils.upsert_raw_data('infraspeak_raw_works', 'work_id', w_data, 'work')
+        # Planos não precisam de extração de records
+        w_ids = [w['id'] for w in w_data]
+        extract.sync_details(w_ids, 'work', include_records=False)
+
+    # 3. SCHEDULED WORKS (OCORRÊNCIAS) - Parâmetro validado: date_min_updated_at
+    print("\n>>> Sincronizando Scheduled Works (Ocorrências) recentes...")
+    sw_params = {
+        "date_min_updated_at": f"{date_start}T00:00:00",
+        "expanded": "work.client,work.locations,work.operators,work.work_type",
+        "limit": 200
+    }
+    sw_data = api_client.request_all_pages("works/scheduled", sw_params)
+    if sw_data:
+        utils.upsert_raw_data('infraspeak_raw_scheduled_works', 'scheduled_work_id', sw_data, 'scheduled_work')
+        if include_records:
+            sw_ids = [sw['id'] for sw in sw_data]
+            extract.sync_details(sw_ids, 'scheduled_work', include_records=True)
+
+    print("\n--- Sincronização Delta Finalizada ---")
 
 if __name__ == "__main__":
-    run_daily_sync()
+    # Roda os últimos 3 dias por padrão para sobrepor edições manuais feitas no fim de semana
+    run_incremental_sync(days_back=3, include_records=True)

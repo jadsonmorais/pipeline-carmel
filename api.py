@@ -80,7 +80,7 @@ class RouteManager:
             "limit": 200
         }
     
-# class RouteManager:
+
     @staticmethod
     def get_works_bulk():
         """Captura a estrutura dos modelos de trabalho (Works)"""

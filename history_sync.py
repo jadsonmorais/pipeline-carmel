@@ -55,13 +55,13 @@ def run_historical_sync(date_start, date_end, include_records=False):
                         print(f"[{dia}] Gravando {len(failures_data)} falhas no banco...")
                         utils.upsert_raw_data('infraspeak_raw_failures', 'failure_id', failures_data, 'failure')
 
-            # 2. SCHEDULED WORKS - Processamento em Bloco (Fast)
-            print(f"[{dia}] Baixando Bloco de Scheduled Works...")
-            w_endpoint = "works/scheduled"
+            # 2. WORKS (MESTRE) - Processamento em Bloco
+            print(f"[{dia}] Baixando Bloco de Works (Mestre)...")
+            w_endpoint = "works"
             w_params = {
-                "date_min_start_date": f"{dia}T00:00:00",
-                "date_max_start_date": f"{dia}T23:59:59",
-                "expanded": "work.client,work.locations,work.operators,work.work_type", # Expansões básicas inclusas
+                "date_min_updated_at": f"{dia}T00:00:00",
+                "date_max_updated_at": f"{dia}T23:59:59",
+                "expanded": "workPeriodicity,workSlaRules,workType,client,locations", 
                 "limit": 200
             }
             works_response = api_client.request(w_endpoint, w_params)
@@ -70,12 +70,28 @@ def run_historical_sync(date_start, date_end, include_records=False):
             if works_data:
                 if include_records:
                     w_ids = [w['id'] for w in works_data]
-                    extract.sync_details(w_ids, 'work', include_records=True)
+                    extract.sync_details(w_ids, 'work', include_records=False) 
                 else:
-                    print(f"[{dia}] Gravando {len(works_data)} ocorrências no banco...")
                     utils.upsert_raw_data('infraspeak_raw_works', 'work_id', works_data, 'work')
+
+            # 3. SCHEDULED WORKS (OCORRÊNCIAS) - Processamento em Bloco
+            print(f"[{dia}] Baixando Bloco de Scheduled Works...")
+            sw_endpoint = "works/scheduled"
+            sw_params = {
+                "date_min_start_date": f"{dia}T00:00:00",
+                "date_max_start_date": f"{dia}T23:59:59",
+                "expanded": "work.client,work.locations,work.operators,work.work_type",
+                "limit": 200
+            }
+            sw_response = api_client.request(sw_endpoint, sw_params)
+            sw_data = sw_response.get('data', [])
             
-            print(f"[{dia}] Dia finalizado.")
+            if sw_data:
+                if include_records:
+                    sw_ids = [sw['id'] for sw in sw_data]
+                    extract.sync_details(sw_ids, 'scheduled_work', include_records=True)
+                else:
+                    utils.upsert_raw_data('infraspeak_raw_scheduled_works', 'scheduled_work_id', sw_data, 'scheduled_work')
 
         except Exception as e:
             print(f"[{dia}] Erro: {e}")
