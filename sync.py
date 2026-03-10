@@ -16,47 +16,47 @@ def run_incremental_sync(days_back=3, include_records=True):
     api_client = api.ApiInfraspeak(user, token)
     extract = extractor.InfraspeakExtractor(api_client)
 
-    # # 1. FAILURES
-    # print("\n>>> Sincronizando Failures recentes...")
-    # f_params = {
-    #     "date_min_last_status_change_date": f"{date_start}T00:00:00",
-    #     "expanded": "events,operator,location",
-    #     "limit": 200
-    # }
-    # f_data = api_client.request_all_pages("failures", f_params) 
-    # if f_data:
-    #     utils.upsert_raw_data('infraspeak_raw_failures', 'failure_id', f_data, 'failure')
-    #     if include_records:
-    #         f_ids = [f['id'] for f in f_data]
-    #         extract.sync_details(f_ids, 'failure', include_records=True)
+    # 1. FAILURES
+    print("\n>>> Sincronizando Failures recentes...")
+    f_params = {
+        "date_min_last_status_change_date": f"{date_start}T00:00:00",
+        "expanded": "events,operator,location",
+        "limit": 200
+    }
+    f_data = api_client.request_all_pages("failures", f_params) 
+    if f_data:
+        utils.upsert_raw_data('infraspeak_raw_failures', 'failure_id', f_data, 'failure')
+        if include_records:
+            f_ids = [f['id'] for f in f_data]
+            extract.sync_details(f_ids, 'failure', include_records=True)
 
-    # # 2. WORKS (PLANOS MESTRES) - Parâmetro validado: date_min_updated_at
-    # print("\n>>> Sincronizando Works (Planos Mestres) recentes...")
-    # w_params = {
-    #     "date_min_updated_at": f"{date_start}T00:00:00",
-    #     "expanded": "workPeriodicity,workSlaRules,workType,client,locations",
-    #     "limit": 200
-    # }
-    # w_data = api_client.request_all_pages("works", w_params)
-    # if w_data:
-    #     utils.upsert_raw_data('infraspeak_raw_works', 'work_id', w_data, 'work')
-    #     # Planos não precisam de extração de records
-    #     w_ids = [w['id'] for w in w_data]
-    #     extract.sync_details(w_ids, 'work', include_records=False)
+    # 2. WORKS (PLANOS MESTRES) - Parâmetro validado: date_min_updated_at
+    print("\n>>> Sincronizando Works (Planos Mestres) recentes...")
+    w_params = {
+        "date_min_updated_at": f"{date_start}T00:00:00",
+        "expanded": "workPeriodicity,workSlaRules,workType,client,locations",
+        "limit": 200
+    }
+    w_data = api_client.request_all_pages("works", w_params)
+    if w_data:
+        utils.upsert_raw_data('infraspeak_raw_works', 'work_id', w_data, 'work')
+        # Planos não precisam de extração de records
+        w_ids = [w['id'] for w in w_data]
+        extract.sync_details(w_ids, 'work', include_records=False)
 
-    # # 3. SCHEDULED WORKS (OCORRÊNCIAS) - Parâmetro validado: date_min_updated_at
-    # print("\n>>> Sincronizando Scheduled Works (Ocorrências) recentes...")
-    # sw_params = {
-    #     "date_min_updated_at": f"{date_start}T00:00:00",
-    #     "expanded": "work.client,work.locations,work.operators,work.work_type",
-    #     "limit": 200
-    # }
-    # sw_data = api_client.request_all_pages("works/scheduled", sw_params)
-    # if sw_data:
-    #     utils.upsert_raw_data('infraspeak_raw_scheduled_works', 'scheduled_work_id', sw_data, 'scheduled_work')
-    #     if include_records:
-    #         sw_ids = [sw['id'] for sw in sw_data]
-    #         extract.sync_details(sw_ids, 'scheduled_work', include_records=True)
+    # 3. SCHEDULED WORKS (OCORRÊNCIAS) - Parâmetro validado: date_min_updated_at
+    print("\n>>> Sincronizando Scheduled Works (Ocorrências) recentes...")
+    sw_params = {
+        "date_min_updated_at": f"{date_start}T00:00:00",
+        "expanded": "work.client,work.locations,work.operators,work.work_type",
+        "limit": 200
+    }
+    sw_data = api_client.request_all_pages("works/scheduled", sw_params)
+    if sw_data:
+        utils.upsert_raw_data('infraspeak_raw_scheduled_works', 'scheduled_work_id', sw_data, 'scheduled_work')
+        if include_records:
+            sw_ids = [sw['id'] for sw in sw_data]
+            extract.sync_details(sw_ids, 'scheduled_work', include_records=True)
     
     # 4. OPERATORS (DIMENSÃO)
     print("\n>>> Sincronizando Operators (Operadores)...")

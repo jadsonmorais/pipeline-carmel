@@ -9,7 +9,7 @@ class InfraspeakExtractor:
         self.api = api_client
 
     def sync_details(self, ids, resource_type, include_records=True):
-        """Método unificado para buscar detalhes de Falhas, Trabalhos ou Ocorrências."""
+        """Método unificado com Retry (Resiliência) para buscar detalhes."""
         if not ids:
             return
 
@@ -22,14 +22,13 @@ class InfraspeakExtractor:
             expansion = "operator,location,client,problem"
             if include_records: expansion += ",events.registry"
 
-        elif resource_type == 'work': # Entidade Mestre
+        elif resource_type == 'work': 
             endpoint_prefix = "works"
             table_name = "infraspeak_raw_work_details"
             id_column = "work_id"
-            # O Mestre não possui log de eventos diários, apenas regras gerais
             expansion = "workPeriodicity,workSlaRules,workType,client,locations,operators" 
 
-        elif resource_type == 'scheduled_work': # Ocorrência / Instância
+        elif resource_type == 'scheduled_work': 
             endpoint_prefix = "works/scheduled"
             table_name = "infraspeak_raw_scheduled_work_details"
             id_column = "scheduled_work_id"
@@ -41,18 +40,36 @@ class InfraspeakExtractor:
             return
 
         for r_id in ids:
-            try:
-                params = {"expanded": expansion}
-                response = self.api.request(f"{endpoint_prefix}/{r_id}", params)
-                response['id'] = response['data']['id']
-                
-                # O parâmetro resource_type forma as chaves foreign key perfeitamente graças ao utils.py
-                utils.upsert_raw_data(table_name, id_column, [response], resource_type)
-                time.sleep(0.4) 
-                
-            except Exception as e:
-                print(f" [ERRO] Falha ao detalhar {resource_type} {r_id}: {e}")
-                continue
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    params = {"expanded": expansion}
+                    response = self.api.request(f"{endpoint_prefix}/{r_id}", params)
+                    
+                    # Validação de integridade do payload
+                    if 'data' not in response:
+                        raise ValueError(f"Payload inválido ou vazio retornado pela API.")
+
+                    response['id'] = response['data']['id']
+                    
+                    # Gravando no banco
+                    utils.upsert_raw_data(table_name, id_column, [response], resource_type)
+                    time.sleep(0.4) # Respiro padrão entre chamadas bem-sucedidas
+                    break # Sucesso absoluto! Quebra o loop de retentativas e vai para o próximo ID
+                    
+                except Exception as e:
+                    if attempt < max_retries - 1:
+                        # Exponential Backoff: espera 2s, depois 4s...
+                        sleep_time = 2 ** (attempt + 1) 
+                        print(f"   [AVISO] Instabilidade no {resource_type} ID {r_id} (Tentativa {attempt + 1}/{max_retries}). Retentando em {sleep_time}s... Erro: {e}")
+                        time.sleep(sleep_time)
+                    else:
+                        print(f"   [ERRO FATAL] Falha definitiva no {resource_type} ID {r_id} após {max_retries} tentativas.")
+                        # Grava o ID num log de repescagem para não perder o rastro
+                        with open("ids_perdidos_detalhe.log", "a", encoding="utf-8") as f:
+                            from datetime import datetime
+                            agora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            f.write(f"{agora} | {resource_type} | ID: {r_id} | Erro: {e}\n")
 
 
     def sync_all_failure_details(self, failure_ids):
