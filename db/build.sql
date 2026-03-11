@@ -1,7 +1,8 @@
 -- ==============================================================================
 -- PROJETO INFRASPEAK INTEGRATION - CARMEL HOTÉIS
 -- ARQUIVO: build.sql
--- DESCRIÇÃO: Script de recriação completa do banco de dados (Tabelas e Views)
+-- DESCRIÇÃO: Script de recriação completa do banco de dados (Tabelas, Views e Auditoria)
+-- ATUALIZAÇÃO: Inclusão de event_id nas views analíticas e regras de backlog na auditoria
 -- ==============================================================================
 
 -- ------------------------------------------------------------------------------
@@ -293,6 +294,7 @@ CREATE OR REPLACE VIEW carmel.v_trabalho_analitico_operador_chamados AS
 WITH raw_events AS (
     SELECT 
         d.failure_id,
+        ((evt.value -> 'attributes') ->> 'event_id')::bigint AS event_id,
         ((evt.value -> 'attributes') ->> 'operator_id')::integer AS operator_id,
         (evt.value -> 'attributes') ->> 'action' AS action,
         ((evt.value -> 'attributes') ->> 'date')::timestamp without time zone AS event_time,
@@ -304,11 +306,12 @@ WITH raw_events AS (
 ordered_events AS (
     SELECT 
         failure_id,
+        event_id,
         operator_id,
         action,
         event_time,
-        lead(event_time) OVER (PARTITION BY failure_id, operator_id ORDER BY event_time, event_registry_id) AS next_time,
-        lead(action) OVER (PARTITION BY failure_id, operator_id ORDER BY event_time, event_registry_id) AS next_action
+        lead(event_time) OVER (PARTITION BY failure_id, event_id ORDER BY event_time, event_registry_id) AS next_time,
+        lead(action) OVER (PARTITION BY failure_id, event_id ORDER BY event_time, event_registry_id) AS next_action
     FROM raw_events
 )
 SELECT 
@@ -331,6 +334,7 @@ CREATE OR REPLACE VIEW carmel.v_trabalho_analitico_operador_ocorrencias AS
 WITH raw_events AS (
     SELECT 
         d.scheduled_work_id,
+        ((evt.value -> 'attributes') ->> 'event_id')::bigint AS event_id,
         ((evt.value -> 'attributes') ->> 'operator_id')::integer AS operator_id,
         (evt.value -> 'attributes') ->> 'action' AS action,
         ((evt.value -> 'attributes') ->> 'date')::timestamp without time zone AS event_time,
@@ -342,11 +346,12 @@ WITH raw_events AS (
 ordered_events AS (
     SELECT 
         scheduled_work_id,
+        event_id,
         operator_id,
         action,
         event_time,
-        lead(event_time) OVER (PARTITION BY scheduled_work_id, operator_id ORDER BY event_time, event_registry_id) AS next_time,
-        lead(action) OVER (PARTITION BY scheduled_work_id, operator_id ORDER BY event_time, event_registry_id) AS next_action
+        lead(event_time) OVER (PARTITION BY scheduled_work_id, event_id ORDER BY event_time, event_registry_id) AS next_time,
+        lead(action) OVER (PARTITION BY scheduled_work_id, event_id ORDER BY event_time, event_registry_id) AS next_action
     FROM raw_events
 )
 SELECT 
@@ -369,11 +374,16 @@ WHERE action IN ('STARTED', 'RESUMED')
 -- ------------------------------------------------------------------------------
 /*
 -- A. Auditoria de Ocorrências (Scheduled Works) Concluídas >= 2026 sem detalhes
+-- Nota: Contempla backlog de anos anteriores resolvido no ano atual
 SELECT scheduled_work_id 
 FROM carmel.infraspeak_raw_scheduled_works 
 WHERE scheduled_work_id NOT IN (SELECT scheduled_work_id FROM carmel.infraspeak_raw_scheduled_work_details)
-  AND (data -> 'attributes' ->> 'start_date')::date >= '2026-01-01'
-  AND UPPER(data -> 'attributes' ->> 'state') = 'COMPLETED';
+  AND UPPER(data -> 'attributes' ->> 'state') = 'COMPLETED'
+  AND (
+       (data -> 'attributes' ->> 'start_date')::date >= '2026-01-01'
+       OR 
+       (data -> 'attributes' ->> 'completed_date')::date >= '2026-01-01'
+  );
 
 -- B. Auditoria de Chamados (Failures) criados >= 2026 sem detalhes
 SELECT failure_id 
