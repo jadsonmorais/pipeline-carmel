@@ -291,18 +291,38 @@ LEFT JOIN carmel.v_detalhe_planos_manutencao p ON u.work_id = p.work_id;
 
 -- ANALÍTICA: Apontamento de Horas - Chamados
 CREATE OR REPLACE VIEW carmel.v_trabalho_analitico_operador_chamados AS 
-WITH raw_events AS (
+WITH events AS (
     SELECT 
-        d.failure_id,
-        ((evt.value -> 'attributes') ->> 'event_id')::bigint AS event_id,
-        ((evt.value -> 'attributes') ->> 'operator_id')::integer AS operator_id,
-        (evt.value -> 'attributes') ->> 'action' AS action,
-        ((evt.value -> 'attributes') ->> 'date')::timestamp without time zone AS event_time,
-        (evt.value ->> 'id')::bigint AS event_registry_id
-    FROM carmel.infraspeak_raw_failure_details d,
-    LATERAL jsonb_array_elements(COALESCE(d.data -> 'included', '[]'::jsonb)) evt(value)
-    WHERE (evt.value ->> 'type') = 'event_registry'
-), 
+        failure_id,
+        (val ->> 'id')::bigint AS event_id,
+        ((val -> 'attributes') ->> 'operator_id')::integer AS timesheet_owner_id
+    FROM carmel.infraspeak_raw_failure_details,
+    LATERAL jsonb_array_elements(COALESCE(data -> 'included', '[]'::jsonb)) val
+    WHERE val ->> 'type' = 'event'
+),
+registries AS (
+    SELECT 
+        failure_id,
+        ((val -> 'attributes') ->> 'event_id')::bigint AS event_id,
+        (val -> 'attributes') ->> 'action' AS action,
+        ((val -> 'attributes') ->> 'date')::timestamp without time zone AS event_time,
+        (val ->> 'id')::bigint AS event_registry_id
+    FROM carmel.infraspeak_raw_failure_details,
+    LATERAL jsonb_array_elements(COALESCE(data -> 'included', '[]'::jsonb)) val
+    WHERE val ->> 'type' = 'event_registry'
+),
+raw_events AS (
+    SELECT 
+        r.failure_id,
+        r.event_id,
+        e.timesheet_owner_id AS operator_id,
+        r.action,
+        r.event_time,
+        r.event_registry_id
+    FROM registries r
+    JOIN events e ON r.failure_id = e.failure_id AND r.event_id = e.event_id
+    WHERE e.timesheet_owner_id IS NOT NULL
+),
 ordered_events AS (
     SELECT 
         failure_id,
@@ -331,18 +351,41 @@ WHERE action IN ('STARTED', 'RESUMED')
 
 -- ANALÍTICA: Apontamento de Horas - Ocorrências (Preventivas)
 CREATE OR REPLACE VIEW carmel.v_trabalho_analitico_operador_ocorrencias AS 
-WITH raw_events AS (
+WITH events AS (
+    -- 1. Descobre os eventos válidos (Filtra o Evento Mestre Fantasma)
     SELECT 
-        d.scheduled_work_id,
-        ((evt.value -> 'attributes') ->> 'event_id')::bigint AS event_id,
-        ((evt.value -> 'attributes') ->> 'operator_id')::integer AS operator_id,
-        (evt.value -> 'attributes') ->> 'action' AS action,
-        ((evt.value -> 'attributes') ->> 'date')::timestamp without time zone AS event_time,
-        (evt.value ->> 'id')::bigint AS event_registry_id
-    FROM carmel.infraspeak_raw_scheduled_work_details d,
-    LATERAL jsonb_array_elements(COALESCE(d.data -> 'included', '[]'::jsonb)) evt(value)
-    WHERE (evt.value ->> 'type') = 'event_registry'
-), 
+        scheduled_work_id,
+        (val ->> 'id')::bigint AS event_id,
+        ((val -> 'attributes') ->> 'operator_id')::integer AS timesheet_owner_id
+    FROM carmel.infraspeak_raw_scheduled_work_details,
+    LATERAL jsonb_array_elements(COALESCE(data -> 'included', '[]'::jsonb)) val
+    WHERE val ->> 'type' = 'event'
+),
+registries AS (
+    -- 2. Puxa todos os registros de botões clicados
+    SELECT 
+        scheduled_work_id,
+        ((val -> 'attributes') ->> 'event_id')::bigint AS event_id,
+        (val -> 'attributes') ->> 'action' AS action,
+        ((val -> 'attributes') ->> 'date')::timestamp without time zone AS event_time,
+        (val ->> 'id')::bigint AS event_registry_id
+    FROM carmel.infraspeak_raw_scheduled_work_details,
+    LATERAL jsonb_array_elements(COALESCE(data -> 'included', '[]'::jsonb)) val
+    WHERE val ->> 'type' = 'event_registry'
+),
+raw_events AS (
+    -- 3. Cruza os dados: O registro só passa se o evento pai tiver um dono humano!
+    SELECT 
+        r.scheduled_work_id,
+        r.event_id,
+        e.timesheet_owner_id AS operator_id, -- Assume o dono real da folha de horas
+        r.action,
+        r.event_time,
+        r.event_registry_id
+    FROM registries r
+    JOIN events e ON r.scheduled_work_id = e.scheduled_work_id AND r.event_id = e.event_id
+    WHERE e.timesheet_owner_id IS NOT NULL
+),
 ordered_events AS (
     SELECT 
         scheduled_work_id,
