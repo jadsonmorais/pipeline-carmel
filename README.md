@@ -1,34 +1,198 @@
-Infraspeak ETL Project
-Este projeto automatiza a extração de dados da API Infraspeak v3 para monitoramento de manutenção. O sistema evoluiu de uma arquitetura baseada em arquivos JSON/Parquet (V1) para uma solução robusta de persistência em PostgreSQL utilizando campos JSONB (V2), visando máxima performance e integridade dos dados históricos.
-🚀 Funcionalidades Principais
-• Extração Automática: Sincronização diária de Chamados (Failures) e Trabalhos Agendados (Scheduled Works).
-• Persistência Bruta (Objetivo 1): Armazenamento integral dos objetos JSON da API em tabelas PostgreSQL para evitar perda de dados e permitir reprocessamento futuro.
-• Consultas Otimizadas (JQL): Uso de parâmetros como expanded para capturar relacionamentos (clientes, locais, operadores) em uma única chamada, e date_min_last_status_change_date para capturas incrementais.
-• Gestão de Throttling: Tratamento automático do limite de 60 requisições por minuto através da leitura do header Retry-After.
-• Transformação Analítica: Geração de visualizações (Views SQL) que calculam horas trabalhadas por operador e detalham checklists de auditoria.
-🛠️ Requisitos e Tecnologias
-• Linguagem: Python 3.x.
-• Bibliotecas: requests (API), pandas (Transformação), psycopg2 (PostgreSQL), pyarrow (Parquet).
-• Banco de Dados: PostgreSQL 12+ com suporte a JSONB.
-• Autenticação: Personal Access Token (PAT) via protocolo Bearer SSL.
-📁 Estrutura de Arquivos Críticos
-• api_v2.py: Gerencia as requisições HTTP e a construção de rotas otimizadas com o RouteManager.
-• utils_v2.py: Contém a lógica de conexão com o banco de dados e a função de Upsert (upsert_raw_data), que evita duplicidade de registros ao atualizar dados existentes.
-• history_sync_v2.py: Script especializado para carga de dados históricos em janelas de tempo retroativas (conforme histórico de conversa).
-• auto.bat: Script de lote para execução automatizada via Agendador de Tarefas do Windows.
-⚙️ Configuração
-1. Autenticação: As credenciais devem ser armazenadas em um arquivo .env (ou auth.json) contendo API_DATA_USER e API_DATA_TOKEN.
-2. Ambiente Virtual: Recomenda-se o uso de um venv para isolamento das dependências.
-3. Banco de Dados: Configure as variáveis de ambiente DB_HOST, DB_NAME, DB_USER e DB_PASS para a conexão com o PostgreSQL.
-🔄 Fluxo de Dados (V2)
-1. Extração Bulk: O script identifica registros alterados em uma janela de 3 dias para garantir a captura de atualizações retroativas.
-2. Extração Detalhada: Para cada ID identificado, o sistema realiza uma chamada individual com a expansão events.registry para obter o log completo de atividades.
-3. Persistência: O JSON completo é salvo no banco de dados.
-4. Consumo: O Power BI conecta-se às Views SQL (ex: v_detalhe_chamados_failures), eliminando a necessidade de processamento pesado no Power Query.
-⚠️ Tratamento de Erros e Limites
-• Erro 429: O sistema aguarda o tempo especificado pela API antes de tentar novamente.
-• Erros de Conexão (SSL): Implementação de blocos try/except com continue para garantir que instabilidades na rede não interrompam o processo de carga massiva.
-• Monitoramento: Logs de entrega e erros de servidor (5xx) devem ser reportados ao suporte da Infraspeak conforme necessário.
+# Plataforma de Dados — Carmel Hotéis
 
---------------------------------------------------------------------------------
-Este projeto é mantido como parte da infraestrutura de dados da Carmel Hotéis para gestão operacional de manutenção.
+Pipeline ETL unificado para extração, armazenamento e análise de dados operacionais da rede **Carmel Hotéis**. O sistema conecta múltiplas fontes de dados em um único banco PostgreSQL, permitindo cruzar informações de manutenção, reservas, marketing e outras áreas para tomada de decisão integrada.
+
+---
+
+## Arquitetura
+
+```
+APIs Externas                ETL (Python)              Banco de Dados           Consumo
+─────────────────            ─────────────────         ──────────────────       ──────────
+                             shared/db.py
+Infraspeak API v3  ──────►  etls/infraspeak/  ──────►  PostgreSQL               Power BI
+                             sync.py                    schema: carmel           Flask Intranet
+Futuras fontes     ──────►  etls/<fonte>/     ──────►  host: 10.197.3.2         Agentes IA
+                             sync.py                    Views Analíticas
+```
+
+**Princípio**: dados brutos armazenados integralmente como JSONB (sem transformação nas tabelas raw). Toda lógica de negócio fica em views SQL reutilizáveis por qualquer ferramenta de consumo.
+
+---
+
+## Estrutura de Pastas
+
+```
+infraspeak/
+│
+├── shared/
+│   └── db.py                    ← conexão PostgreSQL + funções de upsert (compartilhadas)
+│
+├── etls/
+│   └── infraspeak/              ← ETL da API Infraspeak v3
+│       ├── api.py               ← cliente HTTP com throttling e paginação
+│       ├── extractor.py         ← extração detalhada com retry (3x backoff)
+│       ├── sync.py              ← sync incremental diário (entry point)
+│       ├── history_sync.py      ← backfill histórico por intervalo de datas
+│       ├── repescagem.py        ← reprocessa IDs falhos de arquivos CSV
+│       └── validador_api.py     ← testa validade de filtros JQL
+│
+├── skills/
+│   ├── infraspeak_db.md         ← referência do banco: tabelas, views, JSONB, queries
+│   ├── infraspeak_api.md        ← referência da API: endpoints, filtros, expansões
+│   └── infraspeak_etl.md        ← referência do pipeline: fluxos, comandos, erros
+│
+├── db/
+│   └── build.sql                ← DDL completo: tabelas, views, schema carmel
+│
+├── auth/
+│   ├── prod/.env                ← credenciais de produção (não commitar)
+│   └── test/.env                ← credenciais de teste
+│
+├── apidocs/                     ← snapshots da documentação oficial da API
+├── examples/                    ← exemplos reais de payloads JSON da API
+├── auto.bat                     ← agendamento via Agendador de Tarefas Windows
+├── requirements.txt
+└── CLAUDE.md                    ← guia para agentes IA trabalharem neste projeto
+```
+
+---
+
+## Setup
+
+### Pré-requisitos
+- Python 3.10+
+- PostgreSQL 12+ com schema `carmel` criado via `db/build.sql`
+- Acesso à rede interna (banco em `10.197.3.2`)
+
+### Instalação
+
+```bash
+# 1. Criar e ativar ambiente virtual
+python -m venv venv
+venv\Scripts\activate        # Windows
+
+# 2. Instalar dependências
+pip install -r requirements.txt
+
+# 3. Configurar credenciais
+# Editar auth/prod/.env com os valores reais:
+```
+
+```env
+API_DATA_USER=usuario@empresa.com
+API_DATA_TOKEN=seu_personal_access_token
+DB_HOST=10.197.3.2
+DB_NAME=carmel
+DB_USER=usuario_db
+DB_PASS=senha_db
+DB_PORT=5432
+```
+
+```bash
+# 4. Criar o schema no banco (primeira vez)
+psql -h 10.197.3.2 -U usuario_db -d carmel -f db/build.sql
+```
+
+---
+
+## Executando
+
+Sempre a partir da **raiz do projeto** (`infraspeak/`):
+
+```bash
+# Sync incremental (últimos 3 dias) — rodar diariamente
+python -m etls.infraspeak.sync
+
+# Backfill histórico
+python -m etls.infraspeak.history_sync 2024-01-01 2024-12-31
+python -m etls.infraspeak.history_sync 2024-01-01 2024-12-31 true   # inclui event registries
+
+# Reprocessar IDs que falharam (colocar IDs em repescagem_failures.csv)
+python -m etls.infraspeak.repescagem
+
+# Validar filtros JQL da API
+python -m etls.infraspeak.validador_api
+```
+
+### Agendamento Automático
+`auto.bat` está configurado para uso com o **Agendador de Tarefas do Windows**. Requer execução como Administrador.
+
+---
+
+## Banco de Dados
+
+### Tabelas Raw (Bronze)
+
+| Tabela | Descrição |
+|--------|-----------|
+| `carmel.infraspeak_raw_failures` | Chamados de manutenção corretiva |
+| `carmel.infraspeak_raw_failure_details` | Detalhe com eventos e log de ações |
+| `carmel.infraspeak_raw_works` | Planos mestres de manutenção preventiva |
+| `carmel.infraspeak_raw_work_details` | Detalhe de plano mestre |
+| `carmel.infraspeak_raw_scheduled_works` | Ocorrências preventivas agendadas |
+| `carmel.infraspeak_raw_scheduled_work_details` | Detalhe de ocorrência com eventos |
+| `carmel.infraspeak_raw_operators` | Técnicos/operadores |
+
+### Views Analíticas (Prata/Ouro)
+
+| View | Descrição |
+|------|-----------|
+| `carmel.v_operadores` | Dimensão de técnicos |
+| `carmel.v_detalhe_planos_manutencao` | Dimensão de planos preventivos |
+| `carmel.v_detalhe_ocorrencias` | Fato de ocorrências com hotel e plano |
+| `carmel.v_trabalho_analitico_operador_chamados` | Horas trabalhadas por operador em chamados |
+| `carmel.v_trabalho_analitico_operador_ocorrencias` | Horas trabalhadas por operador em preventivas |
+
+---
+
+## Tratamento de Erros
+
+| Erro | Tratamento |
+|------|------------|
+| **429 Rate Limit** | Aguarda `Retry-After` segundos e retenta automaticamente |
+| **5xx Instabilidade** | Retry 3x com backoff exponencial (2s → 4s) |
+| **404 Registro deletado** | Loga em `ids_perdidos_detalhe.log` e marca `state = EXCLUIDO` no banco |
+| **Failures PAUSED** | Verificação automática a cada sync — se 404, marca como EXCLUIDO |
+
+---
+
+## Adicionando uma Nova ETL
+
+```bash
+# 1. Criar pasta do novo ETL
+mkdir etls/nome_da_fonte
+touch etls/nome_da_fonte/__init__.py
+```
+
+```python
+# 2. etls/nome_da_fonte/api.py — cliente específico desta fonte
+
+# 3. etls/nome_da_fonte/sync.py — importar shared.db
+from shared import db as utils
+
+utils.upsert_raw_data('nome_da_fonte_raw_tabela', 'id_column', data, 'tipo')
+```
+
+```sql
+-- 4. db/build.sql — adicionar tabela no schema carmel
+CREATE TABLE IF NOT EXISTS carmel.nome_da_fonte_raw_tabela (
+    id VARCHAR(255) PRIMARY KEY,
+    data JSONB NOT NULL,
+    extracted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
+## Referência Completa
+
+Para detalhes aprofundados, consulte os documentos em `skills/`:
+
+- [skills/infraspeak_db.md](skills/infraspeak_db.md) — banco de dados, JSONB, queries
+- [skills/infraspeak_api.md](skills/infraspeak_api.md) — API, endpoints, rate limit
+- [skills/infraspeak_etl.md](skills/infraspeak_etl.md) — pipeline, fluxos, comandos
+
+---
+
+*Projeto mantido como infraestrutura de dados da Carmel Hotéis para gestão operacional integrada.*
