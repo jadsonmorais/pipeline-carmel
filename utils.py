@@ -66,3 +66,18 @@ def upsert_raw_data(table_name, id_column, data_list, type):
     conn.commit()
     cur.close()
     conn.close()
+
+def mark_failure_as_deleted(failure_id):
+    """Atualiza o status do failure para EXCLUIDO quando a API retornar 404."""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    query = """
+        UPDATE carmel.infraspeak_raw_failures
+        SET data = jsonb_set(data, '{attributes,status}', '"EXCLUIDO"'),
+            extracted_at = CURRENT_TIMESTAMP
+        WHERE failure_id = %s;
+    """
+    cur.execute(query, (str(failure_id),))
+    conn.commit()
+    cur.close()
+    conn.close()

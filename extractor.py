@@ -70,6 +70,10 @@ class InfraspeakExtractor:
                             from datetime import datetime
                             agora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                             f.write(f"{agora} | {resource_type} | ID: {r_id} | Erro: {e}\n")
+                        # Marca como EXCLUIDO no banco se for 404 em failure
+                        if resource_type == 'failure' and '404' in str(e):
+                            utils.mark_failure_as_deleted(r_id)
+                            print(f"   [INFO] failure ID {r_id} marcado como EXCLUIDO no banco.")
 
 
     def sync_all_failure_details(self, failure_ids):
