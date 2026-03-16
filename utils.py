@@ -93,7 +93,7 @@ def mark_failure_as_deleted(failure_id):
     """, (str(failure_id),))
     cur.execute("""
         UPDATE carmel.infraspeak_raw_failure_details
-        SET data = jsonb_set(data, '{data,attributes,state}', '"EXCLUIDO"'),
+        SET data = jsonb_set(data, '{data,attributes,status}', '"EXCLUIDO"'),
             extracted_at = CURRENT_TIMESTAMP
         WHERE failure_id = %s;
     """, (str(failure_id),))
