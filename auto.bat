@@ -14,7 +14,7 @@ call activate
 
 :: Retorna ao diretório raiz e executa o script Python
 cd ..\..\
-py sync.py
+py -m etls.infraspeak.sync
 
 :: Pausa para ver a saída ou erros
 echo.
