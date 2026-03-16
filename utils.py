@@ -67,6 +67,20 @@ def upsert_raw_data(table_name, id_column, data_list, type):
     cur.close()
     conn.close()
 
+def get_failure_ids_by_state(state):
+    """Retorna lista de failure_ids com determinado state no banco."""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT failure_id
+        FROM carmel.infraspeak_raw_failures
+        WHERE data -> 'attributes' ->> 'state' = %s;
+    """, (state,))
+    ids = [row[0] for row in cur.fetchall()]
+    cur.close()
+    conn.close()
+    return ids
+
 def mark_failure_as_deleted(failure_id):
     """Atualiza o state do failure para EXCLUIDO nas tabelas raw e de detalhes quando a API retornar 404."""
     conn = get_db_connection()

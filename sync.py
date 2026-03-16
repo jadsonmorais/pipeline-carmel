@@ -70,6 +70,15 @@ def run_incremental_sync(days_back=3, include_records=True):
         utils.upsert_raw_data('infraspeak_raw_operators', 'operator_id', op_data, 'operator')
         print(f"Foram extraídos/atualizados {len(op_data)} operadores.")
 
+    # 5. VALIDAÇÃO DE FAILURES PAUSADAS
+    print("\n>>> Validando Failures com state PAUSED...")
+    paused_ids = utils.get_failure_ids_by_state('PAUSED')
+    if paused_ids:
+        print(f"   {len(paused_ids)} failures pausadas encontradas. Verificando na API...")
+        extract.sync_details(paused_ids, 'failure', include_records=True)
+    else:
+        print("   Nenhuma failure pausada encontrada.")
+
     print("\n--- Sincronização Delta Finalizada ---")
 
 if __name__ == "__main__":
