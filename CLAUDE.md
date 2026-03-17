@@ -32,6 +32,7 @@ A visão é que **tudo está conectado**: um chamado de manutenção pode explic
 **Fontes de dados integradas**:
 - **Infraspeak** — manutenção corretiva e preventiva (via API HTTP)
 - **PDV Simphony** — notas fiscais emitidas por ponto de venda (via SFTP, arquivos JSON diários)
+- **NF-e XMLs (SMB)** — XMLs enviados ao fiscal, lidos dos shares `\\10.197.0.51\{Hotel}` (implementado)
 - **FISCAL** — documentos fiscais (via API HTTP — em implementação)
 - **SEFAZ** — XMLs de NF-e/NFC-e autorizadas (via share de rede `\\10.197.1.3\Arquivos$\Sefaz` — em implementação)
 
@@ -125,7 +126,7 @@ Arquivo diário por hotel. Nome: `{Hotel}CFB_{YYYY-MM-DD}.json`
 | `CARM` | CHARME |
 | `MAGN` | MAGNA |
 
-**Campo-chave**: `Invoice Data Info 8` = chave NF-e 44 dígitos = `nota_id` na tabela raw = chave de conciliação com SEFAZ.
+**Campo-chave**: `Invoice Data Info 8` = chave NF-e 44 dígitos = `nota_id` na tabela raw = chave de conciliação com NF-e XMLs e SEFAZ.
 
 **Campos financeiros FISID** (semântica Simphony):
 - `Sub Total 1` — valor bruto total da nota
@@ -135,6 +136,23 @@ Arquivo diário por hotel. Nome: `{Hotel}CFB_{YYYY-MM-DD}.json`
 - `Tax Total 1` — ISS calculado
 - `Invoice Data Info 5` — número do quarto do hóspede
 - `Invoice Data Info 6` — nome do garçom/operador
+
+### NF-e XMLs (SMB) — Shares e Mapeamento
+
+XMLs de NF-e/NFC-e emitidos pelo PDV e enviados ao fiscal. Lidos via protocolo SMB.
+
+| Share                      | Hotel canônico |
+|----------------------------|---------------|
+| `\\10.197.0.51\Cumbuco`    | CUMBUCO       |
+| `\\10.197.0.51\Charme`     | CHARME        |
+| `\\10.197.0.51\Magna`      | MAGNA         |
+| `\\10.197.0.51\Taiba`      | TAIBA         |
+
+**Convenção de nome de arquivo**: `NFe{44_digitos}-nfe.xml`
+
+**Chave**: 44 dígitos extraídos do atributo `infNFe/@Id` (strip do prefixo "NFe") = `nota_id` = chave de conciliação com `pdv_raw_notas`.
+
+**Variáveis de ambiente**: `NFE_SMB_HOST`, `NFE_SMB_USER`, `NFE_SMB_PASS`, `NFE_SMB_DOMAIN`
 
 ---
 
@@ -201,6 +219,8 @@ Para tarefas específicas, consulte os documentos em `skills/`:
 | `skills/infraspeak_etl.md` | Entender fluxos, criar novos ETLs, debugar extrações |
 | `skills/pdv_db.md` | Escrever queries, entender JSONB do PDV, conciliação fiscal |
 | `skills/pdv_etl.md` | Entender estrutura JSON do Simphony, SFTP, comandos PDV |
+| `skills/nfe_db.md` | Escrever queries sobre NF-e XMLs, conciliação PDV↔NF-e |
+| `skills/nfe_etl.md` | Entender fluxo SMB, shares por hotel, comandos NF-e |
 
 ---
 
@@ -227,5 +247,8 @@ Sem argumento, sincroniza o dia anterior (padrão de execução diária).
 R: `python -m etls.pdv.history_sync 2026-02-01 2026-02-28`
 Abre uma única conexão SFTP e itera dia a dia. Erros em dias individuais não param o processo. Ao final, exibe total de notas e dias sem arquivo.
 
-**P: Qual é a chave de conciliação entre PDV e SEFAZ?**
-R: `Invoice Data Info 8` no PDV = chave NF-e 44 dígitos = `nota_id` em `pdv_raw_notas`. Quando o ETL SEFAZ estiver implementado, o join será direto: `pdv_raw_notas.nota_id = sefaz_raw_notas.nota_id`.
+**P: Qual é a chave de conciliação entre PDV, NF-e e SEFAZ?**
+R: `Invoice Data Info 8` no PDV = `infNFe/@Id` (strip "NFe") nos XMLs = chave NF-e 44 dígitos = `nota_id` nas tabelas `pdv_raw_notas` e `nfe_raw_xmls`. O join é imediato: `pdv_raw_notas.nota_id = nfe_raw_xmls.nota_id`.
+
+**P: Como sincronizar os XMLs NF-e das pastas compartilhadas?**
+R: `python -m etls.nfe.sync` — varre os 4 shares SMB (Cumbuco, Charme, Magna, Taiba) e persiste todos os XMLs encontrados. Idempotente: rodar novamente apenas atualiza `extracted_at`.

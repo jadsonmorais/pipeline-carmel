@@ -69,6 +69,15 @@ CREATE TABLE IF NOT EXISTS carmel.pdv_raw_notas (
     extracted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- NF-e XMLs: arquivos enviados para o fiscal (shares SMB \\10.197.0.51\{Hotel})
+-- PK = chave NF-e 44 dígitos — mesma chave de pdv_raw_notas.nota_id
+-- data->>'xml_content' contém o XML original completo para auditoria e reprocessamento
+CREATE TABLE IF NOT EXISTS carmel.nfe_raw_xmls (
+    nota_id VARCHAR(44) PRIMARY KEY,
+    data    JSONB NOT NULL,
+    extracted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 
 -- ------------------------------------------------------------------------------
 -- 2. VIEWS DE DIMENSÃO (CAMADA PRATA/OURO)

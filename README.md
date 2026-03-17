@@ -15,6 +15,9 @@ Infraspeak API v3  ──────►  etls/infraspeak/  ──────�
 PDV Simphony       ──────►  etls/pdv/         ──────►  host: 10.197.3.2         Agentes IA
 (SFTP JSON diário)           sync.py                    Views Analíticas
                                                          v_pdv_notas
+NF-e XMLs          ──────►  etls/nfe/         ──────►  nfe_raw_xmls
+(SMB \\10.197.0.51)          sync.py                    (PK = nota_id, join c/ PDV)
+
 FISCAL API         ──────►  etls/fiscal/      ──────►  (em implementação)
 (em implementação)
 
@@ -49,6 +52,11 @@ infraspeak/
 │   │   ├── sync.py              ← sync diário (entry point), default = ontem
 │   │   └── history_sync.py      ← backfill por intervalo de datas
 │   │
+│   ├── nfe/                     ← ETL NF-e XMLs (shares SMB \\10.197.0.51\{Hotel})
+│   │   ├── smb_client.py        ← cliente SMB (lista e lê XMLs das pastas compartilhadas)
+│   │   ├── parser.py            ← parser XML NF-e/NFC-e, extrai campos para JSONB
+│   │   └── sync.py              ← sync completo dos 4 shares (entry point)
+│   │
 │   ├── fiscal/                  ← ETL API Fiscal (em implementação)
 │   │   ├── api.py               ← cliente HTTP (stub)
 │   │   └── sync.py              ← entry point (stub)
@@ -62,7 +70,9 @@ infraspeak/
 │   ├── infraspeak_api.md        ← referência da API Infraspeak: endpoints, filtros, expansões
 │   ├── infraspeak_etl.md        ← referência do pipeline Infraspeak: fluxos, comandos, erros
 │   ├── pdv_db.md                ← referência do banco PDV: tabela, JSONB paths, views, queries
-│   └── pdv_etl.md               ← referência do pipeline PDV: SFTP, estrutura JSON, comandos
+│   ├── pdv_etl.md               ← referência do pipeline PDV: SFTP, estrutura JSON, comandos
+│   ├── nfe_db.md                ← referência da tabela nfe_raw_xmls, queries de conciliação
+│   └── nfe_etl.md               ← referência do ETL NF-e: shares SMB, parser XML, comandos
 │
 ├── db/
 │   └── build.sql                ← DDL completo: tabelas, views, schema carmel
@@ -87,6 +97,7 @@ infraspeak/
 - PostgreSQL 12+ com schema `carmel` criado via `db/build.sql`
 - Acesso à rede interna (banco em `10.197.3.2`)
 - Acesso SFTP ao servidor PDV (`PDV_SFTP_HOST`)
+- Acesso SMB ao servidor de XMLs (`NFE_SMB_HOST=10.197.0.51`)
 
 ### Instalação
 
@@ -120,6 +131,12 @@ PDV_SFTP_USER=<usuario_sftp>
 PDV_SFTP_PASS=<senha_sftp>
 PDV_SFTP_PORT=22
 PDV_SFTP_PATH=/d01/carmel_sftp/arquivos
+
+# NF-e XMLs (SMB)
+NFE_SMB_HOST=10.197.0.51
+NFE_SMB_USER=<usuario_smb>
+NFE_SMB_PASS=<senha_smb>
+NFE_SMB_DOMAIN=
 ```
 
 ```bash
@@ -152,6 +169,9 @@ python -m etls.pdv.sync 2026-02-19
 
 # PDV — backfill de intervalo
 python -m etls.pdv.history_sync 2026-02-01 2026-02-28
+
+# NF-e XMLs — varredura completa dos 4 shares SMB
+python -m etls.nfe.sync
 ```
 
 ### Agendamento Automático
@@ -173,6 +193,7 @@ python -m etls.pdv.history_sync 2026-02-01 2026-02-28
 | `carmel.infraspeak_raw_scheduled_work_details` | Infraspeak | Detalhe de ocorrência com eventos |
 | `carmel.infraspeak_raw_operators` | Infraspeak | Técnicos/operadores |
 | `carmel.pdv_raw_notas` | PDV Simphony | Notas fiscais por ponto de venda (PK = chave NF-e 44 dígitos) |
+| `carmel.nfe_raw_xmls` | NF-e XMLs (SMB) | XMLs enviados ao fiscal por hotel (PK = chave NF-e 44 dígitos, join com PDV) |
 
 ### Views Analíticas (Prata/Ouro)
 
@@ -185,11 +206,13 @@ python -m etls.pdv.history_sync 2026-02-01 2026-02-28
 | `carmel.v_trabalho_analitico_operador_ocorrencias` | Infraspeak | Horas trabalhadas por operador em preventivas |
 | `carmel.v_pdv_notas` | PDV | Notas fiscais com campos extraídos: hotel, data, valor, garçom, quarto, ponto de venda |
 
-### Chave de Conciliação PDV ↔ SEFAZ
+### Chave de Conciliação PDV ↔ NF-e ↔ SEFAZ
 
-O campo `nota_id` em `pdv_raw_notas` é a chave NF-e de 44 dígitos (`Invoice Data Info 8` no Simphony). Quando o ETL SEFAZ estiver implementado, o join será:
+O campo `nota_id` é a chave NF-e de 44 dígitos, compartilhada por todas as fontes fiscais:
+
 ```sql
-pdv_raw_notas.nota_id = sefaz_raw_notas.nota_id
+pdv_raw_notas.nota_id = nfe_raw_xmls.nota_id  -- JOIN já disponível
+-- pdv_raw_notas.nota_id = sefaz_raw_notas.nota_id  -- quando SEFAZ for implementado
 ```
 
 ---
@@ -253,6 +276,10 @@ Para detalhes aprofundados, consulte os documentos em `skills/`:
 **PDV Simphony**
 - [skills/pdv_db.md](skills/pdv_db.md) — tabela raw, JSONB paths, views, queries de conciliação
 - [skills/pdv_etl.md](skills/pdv_etl.md) — SFTP, estrutura JSON Simphony, comandos sync e histórico
+
+**NF-e XMLs (SMB)**
+- [skills/nfe_db.md](skills/nfe_db.md) — tabela nfe_raw_xmls, JSONB paths, queries de conciliação com PDV
+- [skills/nfe_etl.md](skills/nfe_etl.md) — shares SMB, parser XML, variáveis de ambiente, comandos
 
 ---
 

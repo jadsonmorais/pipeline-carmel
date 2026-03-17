@@ -1,0 +1,282 @@
+{
+    "id": "17195944",
+    "data": {
+        "id": "17195944",
+        "type": "failure",
+        "attributes": {
+            "uuid": "8251a786-62c1-4db8-9b02-4920bca214ee",
+            "state": "EXCLUIDO",
+            "solved": false,
+            "status": "EXCLUIDO",
+            "local_id": 841190,
+            "priority": 4,
+            "client_id": 101392,
+            "confirmed": false,
+            "entity_id": 1171,
+            "created_at": "2026-03-16 17:12:55",
+            "failure_id": 17195944,
+            "local_code": "ALOJAMENTO TAÍBA.01.QUARTO 01",
+            "local_name": "ALOJAMENTO TAÍBA - SUÍTE 01 - QUARTO 01",
+            "problem_id": 51057,
+            "updated_at": "2026-03-16 17:18:59",
+            "client_code": "",
+            "client_name": "CARMEL HOTÉIS ()",
+            "description": "TESTE",
+            "external_id": null,
+            "paused_date": "2026-03-16 17:17:31",
+            "report_date": "2026-03-16 17:12:55",
+            "supplier_id": null,
+            "date_deleted": null,
+            "observations": null,
+            "problem_name": "CLIMATIZAÇÃO - AR CONDICIONADO FAZENDO BARULHO",
+            "started_date": "2026-03-16 17:16:19",
+            "approved_date": "2026-03-16 17:15:37",
+            "gatekeeper_id": null,
+            "manpower_cost": "0.00",
+            "message_count": 0,
+            "next_schedule": null,
+            "next_sla_date": null,
+            "priority_text": "URGENT",
+            "root_local_id": 841159,
+            "started_by_id": 51871,
+            "approved_by_id": 51871,
+            "completed_date": "2026-03-16 17:18:59",
+            "cost_center_id": null,
+            "reported_by_id": 51871,
+            "completed_by_id": 51871,
+            "time_statistics": {
+                "started_date": "2026-03-16 17:16:19",
+                "approved_date": "2026-03-16 17:15:37",
+                "real_duration": "P0Y0M0DT0H1M12S",
+                "time_to_start": "P0Y0M0DT0H3M24S",
+                "time_to_approve": "P0Y0M0DT0H2M42S",
+                "last_paused_date": "2026-03-16 17:17:31",
+                "time_to_complete": "P0Y0M0DT0H6M4S",
+                "last_completed_date": "2026-03-16 17:18:59",
+                "last_paused_description": null,
+                "time_to_start_after_approved": "P0Y0M0DT0H0M42S",
+                "time_to_complete_after_started": "P0Y0M0DT0H2M40S"
+            },
+            "signature_status": "NOT_SIGNED",
+            "manpower_duration": "P0Y0M0DT0H1M12S",
+            "state_description": null,
+            "network_failure_id": null,
+            "failure_priority_id": 4533,
+            "next_failure_sla_id": null,
+            "next_sla_percentage": null,
+            "next_failure_sla_date": null,
+            "last_status_change_date": "2026-03-16 17:18:59",
+            "failure_original_mapping_id": null,
+            "next_failure_sla_status_order": null
+        },
+        "relationships": {
+            "client": {
+                "data": {
+                    "id": "101392",
+                    "type": "client"
+                }
+            },
+            "events": {
+                "data": [
+                    {
+                        "id": "234260778",
+                        "type": "event"
+                    }
+                ]
+            },
+            "problem": {
+                "data": {
+                    "id": "51057",
+                    "type": "problem_type"
+                }
+            },
+            "location": {
+                "data": {
+                    "id": "841190",
+                    "type": "location"
+                }
+            },
+            "operator": {
+                "data": {
+                    "id": "51871",
+                    "type": "operator"
+                }
+            }
+        }
+    },
+    "included": [
+        {
+            "id": "368109828",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2026-03-16 17:16:19",
+                "action": "CREATED",
+                "event_id": 234260778,
+                "operator_id": 51871,
+                "date_updated": "2026-03-16 17:16:19",
+                "event_registry_id": 368109828
+            }
+        },
+        {
+            "id": "368109829",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2026-03-16 17:16:19",
+                "action": "STARTED",
+                "event_id": 234260778,
+                "operator_id": 51871,
+                "date_updated": "2026-03-16 17:16:19",
+                "event_registry_id": 368109829
+            }
+        },
+        {
+            "id": "368109912",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2026-03-16 17:17:31",
+                "action": "PAUSED",
+                "event_id": 234260778,
+                "operator_id": 51871,
+                "date_updated": "2026-03-16 17:17:31",
+                "event_registry_id": 368109912
+            }
+        },
+        {
+            "id": "368110034",
+            "type": "event_registry",
+            "attributes": {
+                "date": "2026-03-16 17:18:59",
+                "action": "COMPLETED",
+                "event_id": 234260778,
+                "operator_id": 51871,
+                "date_updated": "2026-03-16 17:18:59",
+                "event_registry_id": 368110034
+            }
+        },
+        {
+            "id": "101392",
+            "type": "client",
+            "attributes": {
+                "nif": "",
+                "city": "",
+                "code": "",
+                "name": "CARMEL HOTÉIS",
+                "address": "",
+                "country": "",
+                "client_id": 101392,
+                "created_at": null,
+                "my_company": true,
+                "updated_at": "2025-10-29T11:01:56.000000Z",
+                "client_uuid": "685ec6f4-0aae-4098-8696-63fe488edbcb",
+                "postal_code": "",
+                "observations": ""
+            }
+        },
+        {
+            "id": "234260778",
+            "type": "event",
+            "attributes": {
+                "status": "COMPLETED",
+                "planned": false,
+                "work_id": null,
+                "end_date": null,
+                "event_id": 234260778,
+                "operator": null,
+                "failure_id": 17195944,
+                "start_date": "2026-03-16 17:16:19",
+                "external_id": null,
+                "observation": null,
+                "operator_id": 51871,
+                "manpower_cost": 0,
+                "schedule_work_id": null,
+                "manpower_duration": "P0Y0M0DT0H1M12S",
+                "last_status_change_date": "2026-03-16 17:18:59",
+                "manually_changed_duration": false
+            },
+            "relationships": {
+                "registry": {
+                    "data": [
+                        {
+                            "id": "368109828",
+                            "type": "event_registry"
+                        },
+                        {
+                            "id": "368109829",
+                            "type": "event_registry"
+                        },
+                        {
+                            "id": "368109912",
+                            "type": "event_registry"
+                        },
+                        {
+                            "id": "368110034",
+                            "type": "event_registry"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "841190",
+            "type": "location",
+            "attributes": {
+                "area": null,
+                "code": "QUARTO 01",
+                "name": "QUARTO 01",
+                "volume": null,
+                "local_id": 841190,
+                "entity_id": 1171,
+                "full_code": "ALOJAMENTO TAÍBA.01.QUARTO 01",
+                "full_name": "ALOJAMENTO TAÍBA - SUÍTE 01 - QUARTO 01",
+                "parent_id": 841186,
+                "glass_area": null,
+                "local_uuid": "21bee7fb-1f14-4fdb-ba0a-606048d27b86",
+                "observation": "",
+                "orientation": null,
+                "date_deleted": null,
+                "date_updated": "2021-04-27 09:07:55",
+                "root_parent_id": 841159,
+                "is_from_network": false
+            }
+        },
+        {
+            "id": "51871",
+            "type": "operator",
+            "attributes": {
+                "email": "pcm.daniel.douglas.carmel@gmail.com",
+                "phone": null,
+                "account": "admin",
+                "language": "pt_br",
+                "timezone": "America/Fortaleza",
+                "cellphone": "85987393778",
+                "entity_id": 1171,
+                "full_name": "DANIEL DOUGLAS HONORATO TEIXEIRA",
+                "created_at": "2023-06-12T12:29:44.000000Z",
+                "calendar_id": null,
+                "operator_id": 51871,
+                "warehouse_id": 3841,
+                "cost_per_hour": 0,
+                "operator_uuid": "e0a4c7e4-a853-4920-8dc4-b15f9699cb24",
+                "is_from_network": false,
+                "phone_country_code": null,
+                "follows_default_calendar": true
+            }
+        },
+        {
+            "id": "51057",
+            "type": "problem_type",
+            "attributes": {
+                "name": "AR CONDICIONADO FAZENDO BARULHO",
+                "entity_id": 1171,
+                "full_name": "CLIMATIZAÇÃO - AR CONDICIONADO FAZENDO BARULHO",
+                "parent_id": 51053,
+                "created_at": null,
+                "problem_id": 51057,
+                "updated_at": "2025-08-25T13:57:17.000000Z",
+                "description": "",
+                "date_deleted": null,
+                "is_from_network": false
+            }
+        }
+    ]
+}
