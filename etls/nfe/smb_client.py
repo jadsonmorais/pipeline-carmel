@@ -62,7 +62,7 @@ class SMBShareClient:
             share_path = Path(f'\\\\{HOST}\\{share_name}')
             print(f'[NF-e SMB] [NF-e] Listando {share_name}...')
             try:
-                all_files = [f for f in share_path.glob('*.xml') if not f.name.endswith('-can.xml')]
+                all_files = [f for f in share_path.glob('*.xml') if not f.name.endswith('-can.xml') and not f.name.startswith('CFe')]
                 novos = [f for f in all_files if f.stem not in skip_ids]
                 print(f'[NF-e SMB]   {len(all_files)} total, {len(novos)} novos')
                 for xml_path in novos:
