@@ -42,7 +42,8 @@ class SMBShareClient:
         pass
 
     def _iter_files(self, pattern, label, skip_ids, skip_suffix=None):
-        """Iterador genérico: lista arquivos por padrão, pula já processados."""
+        """Iterador genérico: lista arquivos por padrão, pula já processados.
+        skip_ids deve conter nomes de arquivo (f.name) já processados."""
         for hotel, share_name in HOTEL_SHARES.items():
             share_path = Path(f'\\\\{HOST}\\{share_name}')
             print(f'[NF-e SMB] [{label}] Listando {share_name}...')
@@ -50,7 +51,7 @@ class SMBShareClient:
                 all_files = list(share_path.glob(pattern))
                 if skip_suffix:
                     all_files = [f for f in all_files if f.name.endswith(skip_suffix)]
-                novos = [f for f in all_files if _chave_from_filename(f.name) not in skip_ids]
+                novos = [f for f in all_files if f.name not in skip_ids]
                 print(f'[NF-e SMB]   {len(all_files)} total, {len(novos)} novos')
                 for xml_path in novos:
                     try:

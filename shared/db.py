@@ -69,11 +69,11 @@ def get_existing_cancelamento_ids():
 
 
 def get_existing_cancelamento_chaves():
-    """Retorna conjunto de chNFe (44 dígitos da nota cancelada) já persistidos.
-    Usado para skip por nome de arquivo (*-can.xml), cujo nome contém a chave da nota, não o ID do evento."""
+    """Retorna conjunto de source_file (nome do arquivo -can.xml) já persistidos.
+    Comparação direta com f.name no smb_client, evitando ambiguidade de formato do chNFe."""
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT data->>'chNFe' FROM carmel.nfe_raw_cancelamentos;")
+    cur.execute("SELECT data->>'source_file' FROM carmel.nfe_raw_cancelamentos;")
     ids = {row[0] for row in cur.fetchall() if row[0]}
     cur.close()
     conn.close()
