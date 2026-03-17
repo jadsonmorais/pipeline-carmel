@@ -57,6 +57,17 @@ def get_failure_ids_by_state(state):
     return ids
 
 
+def get_existing_cancelamento_ids():
+    """Retorna conjunto de cancelamento_ids já persistidos em nfe_raw_cancelamentos."""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT cancelamento_id FROM carmel.nfe_raw_cancelamentos;")
+    ids = {row[0] for row in cur.fetchall()}
+    cur.close()
+    conn.close()
+    return ids
+
+
 def get_existing_nfe_ids():
     """Retorna conjunto de nota_ids já persistidos em nfe_raw_xmls."""
     conn = get_db_connection()

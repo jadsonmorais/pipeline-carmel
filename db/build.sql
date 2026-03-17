@@ -78,6 +78,15 @@ CREATE TABLE IF NOT EXISTS carmel.nfe_raw_xmls (
     extracted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Cancelamentos NF-e: eventos de cancelamento enviados pela SEFAZ (arquivos *-can.xml)
+-- PK = Id do infEvento
+-- data->>'chNFe' = chave 44 dígitos da nota cancelada (FK para nfe_raw_xmls.nota_id)
+CREATE TABLE IF NOT EXISTS carmel.nfe_raw_cancelamentos (
+    cancelamento_id VARCHAR(255) PRIMARY KEY,
+    data            JSONB NOT NULL,
+    extracted_at    TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 
 -- ------------------------------------------------------------------------------
 -- 2. VIEWS DE DIMENSÃO (CAMADA PRATA/OURO)

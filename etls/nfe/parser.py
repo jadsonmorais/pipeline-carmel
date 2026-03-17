@@ -28,6 +28,61 @@ def _chave_from_filename(filename):
     return match.group(1) if match else None
 
 
+def parse_cancelamento(xml_content, hotel, filename):
+    """
+    Parseia um XML de evento de cancelamento (envEvento/tpEvento=110111).
+
+    Campos extraídos:
+      id / cancelamento_id : Id do infEvento (PK)
+      chNFe                : chave 44 dígitos da nota cancelada (FK para nfe_raw_xmls)
+      hotel                : nome canônico do hotel
+      source_file          : nome do arquivo
+      dhEvento             : data/hora do cancelamento
+      tpEvento             : 110111
+      nSeqEvento           : sequência do evento
+      cnpj                 : CNPJ do emitente
+      nProt                : protocolo do cancelamento
+      xJust                : justificativa
+      xml_content          : XML completo
+    """
+    try:
+        root = ET.fromstring(xml_content)
+    except ET.ParseError as e:
+        raise ValueError(f'XML inválido em {filename}: {e}')
+
+    evento = root.find(_tag('evento'))
+    if evento is None:
+        raise ValueError(f'Elemento evento não encontrado em {filename}')
+
+    inf_evento = evento.find(_tag('infEvento'))
+    if inf_evento is None:
+        raise ValueError(f'Elemento infEvento não encontrado em {filename}')
+
+    def text(node, tag):
+        if node is None:
+            return None
+        child = node.find(_tag(tag))
+        return child.text.strip() if child is not None and child.text else None
+
+    event_id = inf_evento.get('Id', '')
+    det_evento = inf_evento.find(_tag('detEvento'))
+
+    return {
+        'id':               event_id,
+        'cancelamento_id':  event_id,
+        'chNFe':            text(inf_evento, 'chNFe'),
+        'hotel':            hotel,
+        'source_file':      filename,
+        'dhEvento':         text(inf_evento, 'dhEvento'),
+        'tpEvento':         text(inf_evento, 'tpEvento'),
+        'nSeqEvento':       text(inf_evento, 'nSeqEvento'),
+        'cnpj':             text(inf_evento, 'CNPJ'),
+        'nProt':            text(det_evento, 'nProt'),
+        'xJust':            text(det_evento, 'xJust'),
+        'xml_content':      xml_content,
+    }
+
+
 def parse_xml(xml_content, hotel, filename):
     """
     Parseia um XML NF-e/NFC-e e retorna um dict pronto para upsert.
