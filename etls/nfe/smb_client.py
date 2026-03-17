@@ -36,7 +36,6 @@ class SMBShareClient:
             HOST,
             username=USER,
             password=PASS,
-            domain=DOMAIN or None,
         )
         return self
 
