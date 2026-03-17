@@ -58,6 +58,19 @@ CREATE TABLE IF NOT EXISTS carmel.infraspeak_raw_operators (
 
 
 -- ------------------------------------------------------------------------------
+-- PDV / FISCAL / SEFAZ (CAMADA BRONZE / RAW)
+-- ------------------------------------------------------------------------------
+
+-- PDV Simphony: um registro por nota fiscal emitida no PDV
+-- PK = chave NF-e 44 dígitos (Invoice Data Info 8) — chave de conciliação com SEFAZ
+CREATE TABLE IF NOT EXISTS carmel.pdv_raw_notas (
+    nota_id VARCHAR(44) PRIMARY KEY,
+    data JSONB NOT NULL,
+    extracted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- ------------------------------------------------------------------------------
 -- 2. VIEWS DE DIMENSÃO (CAMADA PRATA/OURO)
 -- ------------------------------------------------------------------------------
 
