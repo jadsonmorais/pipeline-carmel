@@ -7,11 +7,11 @@ JANELA_DIAS = 7
 
 
 def _to_records(raw_list):
-    records = []
+    seen = {}
     for item in raw_list:
         item['id'] = str(item['IDLANCAMENTOICMSBASE'])
-        records.append(item)
-    return records
+        seen[item['id']] = item  # última ocorrência prevalece
+    return list(seen.values())
 
 
 def run(date_ini_str=None, date_fim_str=None):
