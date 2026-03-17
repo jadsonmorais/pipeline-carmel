@@ -5,6 +5,20 @@ Leia antes de qualquer tarefa.
 
 ---
 
+## REGRA OBRIGATÓRIA — Manutenção de Documentação
+
+**Após qualquer alteração ao projeto** (novo ETL, nova tabela, nova view, novo módulo, nova dependência, nova variável de ambiente), você **DEVE** atualizar os três arquivos abaixo antes de considerar a tarefa concluída:
+
+| Arquivo | O que atualizar |
+|---------|----------------|
+| `CLAUDE.md` | Contexto de negócio, campos críticos, skills, FAQ |
+| `README.md` | Diagrama de arquitetura, estrutura de pastas, tabelas/views, comandos, .env |
+| `db/build.sql` | Toda DDL nova (tabelas e views) — é a fonte da verdade do schema |
+
+Nunca finalize uma sessão de trabalho sem ter feito essas três atualizações.
+
+---
+
 ## Contexto de Negócio
 
 Este é o **hub de dados operacionais da rede Carmel Hotéis** — não apenas um ETL de manutenção.
@@ -13,9 +27,11 @@ A visão é que **tudo está conectado**: um chamado de manutenção pode explic
 
 **Hotéis da rede**: CUMBUCO, TAÍBA, CHARME, MAGNA
 
-**Fontes de dados integradas (atual e futuras)**:
-- Infraspeak — manutenção corretiva e preventiva
-- (futuras) reservas, marketing, RH, financeiro
+**Fontes de dados integradas**:
+- **Infraspeak** — manutenção corretiva e preventiva (via API HTTP)
+- **PDV Simphony** — notas fiscais emitidas por ponto de venda (via SFTP, arquivos JSON diários)
+- **FISCAL** — documentos fiscais (via API HTTP — em implementação)
+- **SEFAZ** — XMLs de NF-e/NFC-e autorizadas (via share de rede `\\10.197.1.3\Arquivos$\Sefaz` — em implementação)
 
 **Banco de produção**: PostgreSQL em `10.197.3.2`, schema `carmel`
 
@@ -27,6 +43,8 @@ A visão é que **tudo está conectado**: um chamado de manutenção pode explic
 shared/db.py         ← ÚNICO lugar para funções de banco
 etls/<fonte>/        ← cada fonte de dados tem sua pasta isolada
   api.py             ← cliente HTTP específico da fonte
+  sftp.py            ← cliente SFTP (fontes baseadas em arquivo, ex: PDV)
+  parser.py          ← parser de arquivo (JSON, XML, etc.)
   extractor.py       ← lógica de extração com retry
   sync.py            ← orquestrador (entry point)
 skills/              ← documentação de conhecimento para agentes IA
@@ -57,14 +75,15 @@ Nunca importar `utils` (arquivo legado deletado). Nunca duplicar funções de `s
 Sempre como módulo Python a partir da raiz:
 ```bash
 python -m etls.infraspeak.sync
-python -m etls.infraspeak.history_sync 2024-01-01 2024-12-31 true
+python -m etls.pdv.sync
+python -m etls.pdv.sync 2026-02-19   # data específica
 ```
 
 ---
 
 ## Campos Críticos — Armadilhas Conhecidas
 
-### state vs status em Failures
+### state vs status em Failures (Infraspeak)
 
 | Tabela | Campo correto | Path JSONB |
 |--------|--------------|------------|
@@ -82,16 +101,65 @@ Para atualizar um campo dentro do JSONB sem sobrescrever o objeto inteiro, usar 
 jsonb_set(data, '{attributes,state}', '"NOVO_VALOR"')
 ```
 
+### PDV Simphony — Estrutura do JSON
+
+Arquivo diário por hotel. Nome: `{Hotel}CFB_{YYYY-MM-DD}.json`
+
+```
+[ [header FIS], [{}], [registros FISID...], [{}] ]
+```
+
+| Seção | Conteúdo |
+|-------|----------|
+| `data[0][0]` | Header: `Store Number`, `Store Name`, `First Business Date` |
+| `data[2]` | Lista de registros `FISID` (um por nota fiscal) |
+
+**Mapeamento Store Number → Hotel:**
+
+| Store Number | Hotel canônico |
+|-------------|---------------|
+| `CUMBUCO` | CUMBUCO |
+| `TAIBA` | TAIBA |
+| `CARM` | CHARME |
+| `MAGN` | MAGNA |
+
+**Campo-chave**: `Invoice Data Info 8` = chave NF-e 44 dígitos = `nota_id` na tabela raw = chave de conciliação com SEFAZ.
+
+**Campos financeiros FISID** (semântica Simphony):
+- `Sub Total 1` — valor bruto total da nota
+- `Sub Total 2` — subtotal tributável (ISS)
+- `Sub Total 3` — subtotal não tributável
+- `Sub Total 6` — valor de consumação/gorjeta (depende da configuração do centro de receita)
+- `Tax Total 1` — ISS calculado
+- `Invoice Data Info 5` — número do quarto do hóspede
+- `Invoice Data Info 6` — nome do garçom/operador
+
 ---
 
 ## Padrões a Seguir
 
 ### Novo ETL (nova fonte de dados)
 1. `etls/<fonte>/__init__.py` (vazio)
-2. `etls/<fonte>/api.py` com cliente HTTP
-3. `etls/<fonte>/sync.py` importando `shared.db`
-4. Tabelas em `db/build.sql`
-5. Skill em `skills/<fonte>_db.md`, `skills/<fonte>_api.md`, `skills/<fonte>_etl.md`
+2. `etls/<fonte>/api.py` ou `sftp.py` com cliente da fonte
+3. `etls/<fonte>/parser.py` se houver parse de arquivo
+4. `etls/<fonte>/sync.py` importando `shared.db`
+5. Tabelas em `db/build.sql`
+6. Skill em `skills/<fonte>_db.md`, `skills/<fonte>_api.md`, `skills/<fonte>_etl.md`
+7. **Atualizar `CLAUDE.md` e `README.md`** com a nova fonte
+
+### ETL baseado em SFTP (padrão PDV)
+```python
+from . import sftp as sftp_module, parser
+from shared import db as utils
+
+def run(date_str=None):
+    with sftp_module.SFTPClient() as client:
+        files = client.list_files_for_date(date_str)
+        for filename in files:
+            content = client.download_content(filename)
+            records = parser.parse_file(content, filename)
+            utils.upsert_raw_data('tabela_raw', 'tipo_id', records, 'tipo')
+```
 
 ### Tratamento de 404 em novas ETLs
 Seguir o padrão já implementado para failures:
@@ -112,8 +180,9 @@ Padrão: 3 tentativas, backoff exponencial (2s → 4s), falha definitiva → log
 - Não transformar dados nas tabelas raw — elas são arquivos históricos imutáveis
 - Não commitar `auth/prod/.env` ou qualquer credencial
 - Não usar `import utils` (arquivo legado removido) — usar `from shared import db as utils`
-- Não rodar scripts diretamente com `python sync.py` — usar `python -m etls.infraspeak.sync`
+- Não rodar scripts diretamente com `python sync.py` — usar `python -m etls.<fonte>.sync`
 - Não hardcodar caminhos como `H:/Meu Drive` — usar `Path(__file__).parent`
+- **Não finalizar uma tarefa sem atualizar CLAUDE.md, README.md e db/build.sql**
 
 ---
 
@@ -123,7 +192,7 @@ Para tarefas específicas, consulte os documentos em `skills/`:
 
 | Skill | Quando usar |
 |-------|-------------|
-| `skills/infraspeak_db.md` | Escrever queries, entender schema, modificar banco |
+| `skills/infraspeak_db.md` | Escrever queries, entender schema Infraspeak, modificar banco |
 | `skills/infraspeak_api.md` | Construir requisições, entender endpoints e filtros |
 | `skills/infraspeak_etl.md` | Entender fluxos, criar novos ETLs, debugar extrações |
 
@@ -143,3 +212,10 @@ R: Criar `etls/reservas/` com `api.py` e `sync.py`, adicionar tabelas em `db/bui
 **P: Como executar um backfill de um período específico?**
 R: `python -m etls.infraspeak.history_sync 2024-01-01 2024-12-31 true`
 O `true` final ativa a extração de event registries (necessário para cálculo de horas).
+
+**P: Como sincronizar o PDV de uma data específica?**
+R: `python -m etls.pdv.sync 2026-02-19`
+Sem argumento, sincroniza o dia anterior (padrão de execução diária).
+
+**P: Qual é a chave de conciliação entre PDV e SEFAZ?**
+R: `Invoice Data Info 8` no PDV = chave NF-e 44 dígitos = `nota_id` em `pdv_raw_notas`. Quando o ETL SEFAZ estiver implementado, o join será direto: `pdv_raw_notas.nota_id = sefaz_raw_notas.nota_id`.

@@ -426,6 +426,34 @@ WHERE action IN ('STARTED', 'RESUMED')
 
 
 -- ------------------------------------------------------------------------------
+-- 4. VIEWS PDV / FISCAL / SEFAZ
+-- ------------------------------------------------------------------------------
+
+-- PDV: notas fiscais emitidas pelo Simphony (uma linha por nota/comanda)
+CREATE OR REPLACE VIEW carmel.v_pdv_notas AS
+SELECT
+    nota_id                                                        AS chave_nfe,
+    data->>'hotel'                                                 AS hotel,
+    (data->>'Business Date')::DATE                                 AS data_venda,
+    data->>'FCR Invoice Number'                                    AS numero_nota,
+    (data->>'Check Number')::BIGINT                                AS numero_comanda,
+    (data->>'Sub Total 1')::NUMERIC(12,2)                         AS subtotal_1,
+    (data->>'Sub Total 2')::NUMERIC(12,2)                         AS subtotal_2,
+    (data->>'Sub Total 3')::NUMERIC(12,2)                         AS subtotal_3,
+    (data->>'Sub Total 6')::NUMERIC(12,2)                         AS subtotal_6,
+    (data->>'Tax Total 1')::NUMERIC(12,2)                         AS imposto_1,
+    data->>'Local Revenue Center Name'                             AS ponto_venda,
+    data->>'Revenue Center Master Name'                            AS ponto_venda_master,
+    data->>'Invoice Data Info 5'                                   AS quarto,
+    data->>'Invoice Data Info 6'                                   AS garcom,
+    (data->>'Invoice Status')::SMALLINT                            AS status_nota,
+    data->>'uwsName'                                               AS terminal_pdv,
+    data->>'source_file'                                           AS arquivo_origem,
+    extracted_at
+FROM carmel.pdv_raw_notas;
+
+
+-- ------------------------------------------------------------------------------
 -- 5. QUERIES DE AUDITORIA E SAÚDE DO BANCO (EXECUTAR MANUALMENTE QUANDO NECESSÁRIO)
 -- ------------------------------------------------------------------------------
 /*
