@@ -32,18 +32,20 @@ class SMBShareClient:
     def __exit__(self, *args):
         pass
 
-    def iter_xml_files(self):
+    def iter_xml_files(self, skip_ids=None):
         """
-        Itera sobre todos os XMLs de todos os hotéis.
+        Itera sobre os XMLs novos (não presentes em skip_ids) de todos os hotéis.
         Yield: (hotel, filename, xml_content)
         """
+        skip_ids = skip_ids or set()
         for hotel, share_name in HOTEL_SHARES.items():
             share_path = Path(f'\\\\{HOST}\\{share_name}')
             print(f'[NF-e SMB] Listando {share_name}...')
             try:
                 xml_files = list(share_path.glob('*.xml'))
-                print(f'[NF-e SMB]   {len(xml_files)} XMLs encontrados')
-                for xml_path in xml_files:
+                novos = [f for f in xml_files if f.stem not in skip_ids]
+                print(f'[NF-e SMB]   {len(xml_files)} total, {len(novos)} novos')
+                for xml_path in novos:
                     try:
                         content = xml_path.read_text(encoding='utf-8', errors='replace')
                         yield hotel, xml_path.name, content

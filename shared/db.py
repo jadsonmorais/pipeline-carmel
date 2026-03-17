@@ -57,6 +57,17 @@ def get_failure_ids_by_state(state):
     return ids
 
 
+def get_existing_nfe_ids():
+    """Retorna conjunto de nota_ids já persistidos em nfe_raw_xmls."""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT nota_id FROM carmel.nfe_raw_xmls;")
+    ids = {row[0] for row in cur.fetchall()}
+    cur.close()
+    conn.close()
+    return ids
+
+
 def mark_failure_as_deleted(failure_id):
     """Atualiza o state do failure para EXCLUIDO nas tabelas raw e de detalhes quando a API retornar 404."""
     conn = get_db_connection()
