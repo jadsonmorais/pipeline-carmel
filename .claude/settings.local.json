@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"c:\\\\Users\\\\jadson.morais\\\\Projects\\\\infraspeak\\\\infraspeak\\\\etls\\\\fiscal\"\" 2>&1 || echo \"Directory does not exist or is empty \")"
+    ]
+  }
+}

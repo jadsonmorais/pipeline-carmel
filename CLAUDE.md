@@ -33,7 +33,7 @@ A visão é que **tudo está conectado**: um chamado de manutenção pode explic
 - **Infraspeak** — manutenção corretiva e preventiva (via API HTTP)
 - **PDV Simphony** — notas fiscais emitidas por ponto de venda (via SFTP, arquivos JSON diários)
 - **NF-e XMLs (SMB)** — XMLs enviados ao fiscal, lidos dos shares `\\10.197.0.51\{Hotel}` (implementado)
-- **FISCAL** — documentos fiscais (via API HTTP — em implementação)
+- **FISCAL (CMERP)** — lançamentos fiscais por empresa/hotel (via API HTTP, `idExportacao=80`, implementado)
 - **SEFAZ** — XMLs de NF-e/NFC-e autorizadas (via share de rede `\\10.197.1.3\Arquivos$\Sefaz` — em implementação)
 
 **Banco de produção**: PostgreSQL em `10.197.3.2`, schema `carmel`
@@ -157,6 +157,20 @@ XMLs de NF-e/NFC-e emitidos pelo PDV e enviados ao fiscal. Lidos via protocolo S
 **Chave (nfe_raw_cancelamentos)**: `infEvento/@Id` = `cancelamento_id` (PK). O campo `data->>'chNFe'` aponta para `nfe_raw_xmls.nota_id`.
 
 **Variáveis de ambiente**: `NFE_SMB_HOST`, `NFE_SMB_USER`, `NFE_SMB_PASS`, `NFE_SMB_DOMAIN`
+
+### Fiscal CMERP — API de Lançamentos
+
+API HTTP que retorna lançamentos fiscais por empresa/hotel via export parametrizado.
+
+**Endpoint**: `GET https://carmel-api.cmerp.com.br/Global.API/ExportarDados/Executar?idExportacao=80&...`
+
+**Parâmetros obrigatórios**: `DataIni`, `DataFim` (DateTime), `IdEmpresa` (string com IDs separados por vírgula)
+
+**Identificação do hotel**: campo `FKEMPRESA` / `EMPRESA` no retorno.
+
+**PK**: `IDLANCAMENTOICMSBASE` → `lancamento_id` na tabela `fiscal_raw_lancamentos`.
+
+**Variáveis de ambiente**: `CLIENT-ID`, `CLIENT-SECRET`, `EMPRESA-IDS`, `USUARIO-ID`
 
 ---
 

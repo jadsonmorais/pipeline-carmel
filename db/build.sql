@@ -69,6 +69,14 @@ CREATE TABLE IF NOT EXISTS carmel.pdv_raw_notas (
     extracted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Fiscal CMERP: lançamentos fiscais por empresa/hotel (idExportacao=80)
+-- PK = IDLANCAMENTOICMSBASE (string)
+CREATE TABLE IF NOT EXISTS carmel.fiscal_raw_lancamentos (
+    lancamento_id VARCHAR(255) PRIMARY KEY,
+    data          JSONB NOT NULL,
+    extracted_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- NF-e XMLs: arquivos enviados para o fiscal (shares SMB \\10.197.0.51\{Hotel})
 -- PK = chave NF-e 44 dígitos — mesma chave de pdv_raw_notas.nota_id
 -- data->>'xml_content' contém o XML original completo para auditoria e reprocessamento
