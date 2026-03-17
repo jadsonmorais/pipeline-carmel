@@ -239,6 +239,8 @@ Para tarefas específicas, consulte os documentos em `skills/`:
 | `skills/pdv_etl.md` | Entender estrutura JSON do Simphony, SFTP, comandos PDV |
 | `skills/nfe_db.md` | Escrever queries sobre NF-e XMLs, conciliação PDV↔NF-e |
 | `skills/nfe_etl.md` | Entender fluxo SMB, shares por hotel, comandos NF-e |
+| `skills/fiscal_db.md` | Escrever queries sobre lançamentos fiscais, mapeamento FKEMPRESA→hotel, view consolidada |
+| `skills/fiscal_etl.md` | Entender API CMERP, headers, parametros, chunking, comandos sync e histórico |
 
 ---
 
@@ -269,4 +271,13 @@ Abre uma única conexão SFTP e itera dia a dia. Erros em dias individuais não 
 R: `Invoice Data Info 8` no PDV = `infNFe/@Id` (strip "NFe") nos XMLs = chave NF-e 44 dígitos = `nota_id` nas tabelas `pdv_raw_notas` e `nfe_raw_xmls`. O join é imediato: `pdv_raw_notas.nota_id = nfe_raw_xmls.nota_id`.
 
 **P: Como sincronizar os XMLs NF-e das pastas compartilhadas?**
-R: `python -m etls.nfe.sync` — varre os 4 shares SMB (Cumbuco, Charme, Magna, Taiba) e persiste todos os XMLs encontrados. Idempotente: rodar novamente apenas atualiza `extracted_at`.
+R: `python -m etls.nfe.sync` — varre os 4 shares SMB (Cumbuco, Charme, Magna2, Taiba) e persiste todos os XMLs encontrados. Idempotente: rodar novamente apenas atualiza `extracted_at`.
+
+**P: Como sincronizar o Fiscal CMERP?**
+R: `python -m etls.fiscal.sync` — busca os últimos 7 dias (janela deslizante). Para período específico: `python -m etls.fiscal.sync 2026-03-10 2026-03-16`.
+
+**P: Como fazer backfill do Fiscal?**
+R: `python -m etls.fiscal.history_sync 2026-02-01 2026-03-15` — itera em chunks de 30 dias. Erros por chunk são logados e o processo continua.
+
+**P: Como o Fiscal se liga ao NF-e?**
+R: `v_fiscal_lancamentos` faz o join via `nNF + serie + hotel`. Match de ~96% para o período com dados de NF-e (jan/2026 em diante). O campo `chave_nfe` traz a chave de 44 dígitos quando o XML existe.
