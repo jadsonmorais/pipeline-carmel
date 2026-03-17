@@ -447,6 +447,39 @@ WHERE action IN ('STARTED', 'RESUMED')
 -- 4. VIEWS PDV / FISCAL / SEFAZ
 -- ------------------------------------------------------------------------------
 
+-- NF-e: visão consolidada — junta XML fiscal + cancelamento + PDV
+-- Uma linha por nota; indica se foi cancelada e se há registro no PDV
+CREATE OR REPLACE VIEW carmel.v_nfe_notas AS
+SELECT
+    n.nota_id,
+    n.data->>'hotel'                              AS hotel,
+    (n.data->>'dhEmi')::timestamptz               AS data_emissao,
+    n.data->>'nNF'                                AS numero_nota,
+    n.data->>'serie'                              AS serie,
+    n.data->>'mod'                                AS modelo,           -- 55=NF-e, 65=NFC-e
+    n.data->>'tpAmb'                              AS ambiente,         -- 1=produção, 2=homologação
+    n.data->>'cnpj_emit'                          AS cnpj_emit,
+    n.data->>'nome_emit'                          AS emitente,
+    (n.data->>'vNF')::NUMERIC(12,2)               AS valor_total,
+    n.data->>'nProt'                              AS protocolo_autorizacao,
+    n.data->>'cStat'                              AS status_sefaz,     -- 100=autorizada
+    (n.data->>'dhRecbto')::timestamptz            AS data_recebimento_sefaz,
+    -- Cancelamento
+    (c.cancelamento_id IS NOT NULL)               AS cancelada,
+    (c.data->>'dhEvento')::timestamptz            AS data_cancelamento,
+    c.data->>'nProt'                              AS protocolo_cancelamento,
+    c.data->>'xJust'                              AS justificativa_cancelamento,
+    -- Conciliação com PDV
+    (p.nota_id IS NOT NULL)                       AS tem_pdv,
+    (p.data->>'Business Date')::DATE              AS data_venda_pdv,
+    (p.data->>'Sub Total 1')::NUMERIC(12,2)       AS valor_pdv,
+    p.data->>'Local Revenue Center Name'          AS ponto_venda,
+    n.extracted_at
+FROM carmel.nfe_raw_xmls n
+LEFT JOIN carmel.nfe_raw_cancelamentos c ON c.data->>'chNFe' = n.nota_id
+LEFT JOIN carmel.pdv_raw_notas p USING (nota_id);
+
+
 -- PDV: notas fiscais emitidas pelo Simphony (uma linha por nota/comanda)
 CREATE OR REPLACE VIEW carmel.v_pdv_notas AS
 SELECT

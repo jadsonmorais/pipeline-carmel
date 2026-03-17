@@ -10,9 +10,7 @@ CREATE TABLE IF NOT EXISTS carmel.nfe_raw_xmls (
 );
 ```
 
----
-
-## Estrutura do JSONB `data`
+### Estrutura do JSONB `data`
 
 | Campo         | Tipo    | Origem no XML                        | Descrição                              |
 |---------------|---------|--------------------------------------|----------------------------------------|
@@ -35,23 +33,98 @@ CREATE TABLE IF NOT EXISTS carmel.nfe_raw_xmls (
 
 ---
 
-## Chave de Conciliação
+## Tabela: `carmel.nfe_raw_cancelamentos`
 
-```
-nfe_raw_xmls.nota_id  =  pdv_raw_notas.nota_id
+```sql
+CREATE TABLE IF NOT EXISTS carmel.nfe_raw_cancelamentos (
+    cancelamento_id VARCHAR(255) PRIMARY KEY,  -- Id do infEvento
+    data            JSONB NOT NULL,
+    extracted_at    TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
-Ambas são a chave NF-e de 44 dígitos. O join é direto.
+### Estrutura do JSONB `data`
+
+| Campo            | Tipo   | Origem no XML            | Descrição                                    |
+|------------------|--------|--------------------------|----------------------------------------------|
+| `id`             | string | `infEvento/@Id`          | ID do evento (igual a cancelamento_id)       |
+| `cancelamento_id`| string | idem                     | redundante, mantido por convenção             |
+| `chNFe`          | string | `infEvento/chNFe`        | chave 44 dígitos da nota cancelada (FK → nfe_raw_xmls.nota_id) |
+| `hotel`          | string | derivado do share SMB    | CUMBUCO/CHARME/MAGNA/TAIBA                   |
+| `source_file`    | string | nome do arquivo          | ex: `NFe...-can.xml`                         |
+| `dhEvento`       | string | `infEvento/dhEvento`     | data/hora do cancelamento (ISO 8601)          |
+| `tpEvento`       | string | `infEvento/tpEvento`     | 110111 = cancelamento NF-e                   |
+| `nSeqEvento`     | string | `infEvento/nSeqEvento`   | número de sequência do evento                |
+| `cnpj`           | string | `infEvento/CNPJ`         | CNPJ do emitente                             |
+| `nProt`          | string | `detEvento/nProt`        | protocolo do cancelamento                    |
+| `xJust`          | string | `detEvento/xJust`        | justificativa do cancelamento                |
+| `xml_content`    | string | arquivo completo         | XML original                                 |
 
 ---
 
-## Queries Úteis
+## Chaves de Conciliação
+
+```
+nfe_raw_xmls.nota_id        =  pdv_raw_notas.nota_id        (PDV ↔ XML fiscal)
+nfe_raw_cancelamentos.data->>'chNFe'  =  nfe_raw_xmls.nota_id  (XML fiscal ↔ cancelamento)
+```
+
+---
+
+## View: `carmel.v_nfe_notas`
+
+View consolidada: uma linha por NF-e, com status de cancelamento e conciliação com PDV.
+
+```sql
+SELECT
+    nota_id, hotel, data_emissao, numero_nota, serie, modelo,
+    ambiente,          -- 1=produção, 2=homologação
+    cnpj_emit, emitente,
+    valor_total,       -- vNF
+    protocolo_autorizacao, status_sefaz,  -- 100=autorizada
+    data_recebimento_sefaz,
+    -- cancelamento
+    cancelada,         -- true/false
+    data_cancelamento, protocolo_cancelamento, justificativa_cancelamento,
+    -- PDV
+    tem_pdv,           -- true/false
+    data_venda_pdv, valor_pdv, ponto_venda,
+    extracted_at
+FROM carmel.v_nfe_notas;
+```
+
+---
+
+## Queries de Validação
 
 ### Contagem por hotel
 
 ```sql
-SELECT data->>'hotel' AS hotel, COUNT(*) AS total
+SELECT hotel, COUNT(*) AS total
 FROM carmel.nfe_raw_xmls
+GROUP BY 1
+ORDER BY 1;
+```
+
+### Cancelamentos por hotel
+
+```sql
+SELECT data->>'hotel' AS hotel, COUNT(*) AS total
+FROM carmel.nfe_raw_cancelamentos
+GROUP BY 1
+ORDER BY 1;
+```
+
+### Visão geral — notas, canceladas e com PDV
+
+```sql
+SELECT
+    hotel,
+    COUNT(*)                       AS total_notas,
+    COUNT(*) FILTER (WHERE cancelada)  AS canceladas,
+    COUNT(*) FILTER (WHERE tem_pdv)    AS com_pdv,
+    COUNT(*) FILTER (WHERE NOT tem_pdv AND NOT cancelada) AS sem_pdv_e_ativas
+FROM carmel.v_nfe_notas
 GROUP BY 1
 ORDER BY 1;
 ```
@@ -91,6 +164,15 @@ SELECT nota_id, data->>'hotel', data->>'dhEmi', data->>'vNF', data->>'nProt'
 FROM carmel.nfe_raw_xmls
 WHERE data->>'cStat' = '100'
 ORDER BY data->>'dhEmi' DESC;
+```
+
+### Cancelamentos que não têm XML correspondente (inconsistência)
+
+```sql
+SELECT c.cancelamento_id, c.data->>'chNFe' AS chave_nota, c.data->>'hotel' AS hotel
+FROM carmel.nfe_raw_cancelamentos c
+LEFT JOIN carmel.nfe_raw_xmls n ON n.nota_id = c.data->>'chNFe'
+WHERE n.nota_id IS NULL;
 ```
 
 ### Recuperar XML completo de uma nota

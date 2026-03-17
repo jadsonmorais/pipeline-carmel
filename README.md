@@ -194,6 +194,7 @@ python -m etls.nfe.sync
 | `carmel.infraspeak_raw_operators` | Infraspeak | Técnicos/operadores |
 | `carmel.pdv_raw_notas` | PDV Simphony | Notas fiscais por ponto de venda (PK = chave NF-e 44 dígitos) |
 | `carmel.nfe_raw_xmls` | NF-e XMLs (SMB) | XMLs enviados ao fiscal por hotel (PK = chave NF-e 44 dígitos, join com PDV) |
+| `carmel.nfe_raw_cancelamentos` | NF-e XMLs (SMB) | Eventos de cancelamento NF-e (`*-can.xml`); `data->>'chNFe'` aponta para `nfe_raw_xmls.nota_id` |
 
 ### Views Analíticas (Prata/Ouro)
 
@@ -205,6 +206,7 @@ python -m etls.nfe.sync
 | `carmel.v_trabalho_analitico_operador_chamados` | Infraspeak | Horas trabalhadas por operador em chamados |
 | `carmel.v_trabalho_analitico_operador_ocorrencias` | Infraspeak | Horas trabalhadas por operador em preventivas |
 | `carmel.v_pdv_notas` | PDV | Notas fiscais com campos extraídos: hotel, data, valor, garçom, quarto, ponto de venda |
+| `carmel.v_nfe_notas` | NF-e XMLs | NF-e consolidada: XML fiscal + status cancelamento + conciliação com PDV (uma linha por nota) |
 
 ### Chave de Conciliação PDV ↔ NF-e ↔ SEFAZ
 

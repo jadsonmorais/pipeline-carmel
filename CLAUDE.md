@@ -148,9 +148,13 @@ XMLs de NF-e/NFC-e emitidos pelo PDV e enviados ao fiscal. Lidos via protocolo S
 | `\\10.197.0.51\Magna`      | MAGNA         |
 | `\\10.197.0.51\Taiba`      | TAIBA         |
 
-**Convenção de nome de arquivo**: `NFe{44_digitos}-nfe.xml`
+**Convenção de nome de arquivo**:
+- `NFe{44_digitos}-nfe.xml` — NF-e/NFC-e (nota fiscal) → tabela `nfe_raw_xmls`
+- `NFe{44_digitos}-can.xml` — cancelamento NF-e → tabela `nfe_raw_cancelamentos`
 
-**Chave**: 44 dígitos extraídos do atributo `infNFe/@Id` (strip do prefixo "NFe") = `nota_id` = chave de conciliação com `pdv_raw_notas`.
+**Chave (nfe_raw_xmls)**: 44 dígitos extraídos do atributo `infNFe/@Id` (strip do prefixo "NFe") = `nota_id` = chave de conciliação com `pdv_raw_notas`.
+
+**Chave (nfe_raw_cancelamentos)**: `infEvento/@Id` = `cancelamento_id` (PK). O campo `data->>'chNFe'` aponta para `nfe_raw_xmls.nota_id`.
 
 **Variáveis de ambiente**: `NFE_SMB_HOST`, `NFE_SMB_USER`, `NFE_SMB_PASS`, `NFE_SMB_DOMAIN`
 
