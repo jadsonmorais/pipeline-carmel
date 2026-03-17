@@ -15,9 +15,9 @@ def run():
     print('--- NF-e SMB Sync ---')
 
     existing_nfe_ids = utils.get_existing_nfe_ids()
-    existing_can_ids = utils.get_existing_cancelamento_ids()
+    existing_can_chaves = utils.get_existing_cancelamento_chaves()
     print(f'[NF-e] {len(existing_nfe_ids)} NF-es já no banco')
-    print(f'[NF-e] {len(existing_can_ids)} cancelamentos já no banco')
+    print(f'[NF-e] {len(existing_can_chaves)} cancelamentos já no banco')
 
     nfe_total = 0
     can_total = 0
@@ -38,7 +38,7 @@ def run():
         _flush(batch, 'nfe_raw_xmls', 'nota_id', 'nota')
 
         batch = []
-        for hotel, filename, xml_content in client.iter_cancelamento_files(skip_ids=existing_can_ids):
+        for hotel, filename, xml_content in client.iter_cancelamento_files(skip_ids=existing_can_chaves):
             try:
                 batch.append(parser.parse_cancelamento(xml_content, hotel, filename))
                 if len(batch) >= BATCH_SIZE:
