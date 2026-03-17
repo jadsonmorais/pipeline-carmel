@@ -46,7 +46,8 @@ infraspeak/
 │   ├── pdv/                     ← ETL PDV Simphony (arquivos JSON via SFTP)
 │   │   ├── sftp.py              ← cliente SFTP (context manager, paramiko)
 │   │   ├── parser.py            ← parse dos JSONs diários, extrai registros FISID
-│   │   └── sync.py              ← sync diário (entry point), default = ontem
+│   │   ├── sync.py              ← sync diário (entry point), default = ontem
+│   │   └── history_sync.py      ← backfill por intervalo de datas
 │   │
 │   ├── fiscal/                  ← ETL API Fiscal (em implementação)
 │   │   ├── api.py               ← cliente HTTP (stub)
@@ -57,9 +58,11 @@ infraspeak/
 │       └── sync.py              ← entry point
 │
 ├── skills/
-│   ├── infraspeak_db.md         ← referência do banco: tabelas, views, JSONB, queries
-│   ├── infraspeak_api.md        ← referência da API: endpoints, filtros, expansões
-│   └── infraspeak_etl.md        ← referência do pipeline: fluxos, comandos, erros
+│   ├── infraspeak_db.md         ← referência do banco Infraspeak: tabelas, views, JSONB, queries
+│   ├── infraspeak_api.md        ← referência da API Infraspeak: endpoints, filtros, expansões
+│   ├── infraspeak_etl.md        ← referência do pipeline Infraspeak: fluxos, comandos, erros
+│   ├── pdv_db.md                ← referência do banco PDV: tabela, JSONB paths, views, queries
+│   └── pdv_etl.md               ← referência do pipeline PDV: SFTP, estrutura JSON, comandos
 │
 ├── db/
 │   └── build.sql                ← DDL completo: tabelas, views, schema carmel
@@ -146,6 +149,9 @@ python -m etls.pdv.sync
 
 # PDV — data específica
 python -m etls.pdv.sync 2026-02-19
+
+# PDV — backfill de intervalo
+python -m etls.pdv.history_sync 2026-02-01 2026-02-28
 ```
 
 ### Agendamento Automático
@@ -239,9 +245,14 @@ CREATE TABLE IF NOT EXISTS carmel.nome_da_fonte_raw_tabela (
 
 Para detalhes aprofundados, consulte os documentos em `skills/`:
 
+**Infraspeak**
 - [skills/infraspeak_db.md](skills/infraspeak_db.md) — banco de dados, JSONB, queries
 - [skills/infraspeak_api.md](skills/infraspeak_api.md) — API, endpoints, rate limit
 - [skills/infraspeak_etl.md](skills/infraspeak_etl.md) — pipeline, fluxos, comandos
+
+**PDV Simphony**
+- [skills/pdv_db.md](skills/pdv_db.md) — tabela raw, JSONB paths, views, queries de conciliação
+- [skills/pdv_etl.md](skills/pdv_etl.md) — SFTP, estrutura JSON Simphony, comandos sync e histórico
 
 ---
 

@@ -14,8 +14,10 @@ Leia antes de qualquer tarefa.
 | `CLAUDE.md` | Contexto de negócio, campos críticos, skills, FAQ |
 | `README.md` | Diagrama de arquitetura, estrutura de pastas, tabelas/views, comandos, .env |
 | `db/build.sql` | Toda DDL nova (tabelas e views) — é a fonte da verdade do schema |
+| `skills/<fonte>_etl.md` | Novo ETL ou novos comandos: estrutura de módulos, fluxos, comandos, variáveis |
+| `skills/<fonte>_db.md` | Nova tabela ou view: schema, JSONB paths, queries úteis, chaves de conciliação |
 
-Nunca finalize uma sessão de trabalho sem ter feito essas três atualizações.
+Nunca finalize uma sessão de trabalho sem ter feito essas atualizações.
 
 ---
 
@@ -143,9 +145,11 @@ Arquivo diário por hotel. Nome: `{Hotel}CFB_{YYYY-MM-DD}.json`
 2. `etls/<fonte>/api.py` ou `sftp.py` com cliente da fonte
 3. `etls/<fonte>/parser.py` se houver parse de arquivo
 4. `etls/<fonte>/sync.py` importando `shared.db`
-5. Tabelas em `db/build.sql`
-6. Skill em `skills/<fonte>_db.md`, `skills/<fonte>_api.md`, `skills/<fonte>_etl.md`
-7. **Atualizar `CLAUDE.md` e `README.md`** com a nova fonte
+5. `etls/<fonte>/history_sync.py` para backfill por intervalo de datas
+6. Tabelas e views em `db/build.sql`
+7. `skills/<fonte>_etl.md` — módulos, fluxos, comandos, variáveis de ambiente
+8. `skills/<fonte>_db.md` — tabelas, JSONB paths, views, queries úteis
+9. Atualizar `CLAUDE.md` e `README.md` com a nova fonte
 
 ### ETL baseado em SFTP (padrão PDV)
 ```python
@@ -182,7 +186,7 @@ Padrão: 3 tentativas, backoff exponencial (2s → 4s), falha definitiva → log
 - Não usar `import utils` (arquivo legado removido) — usar `from shared import db as utils`
 - Não rodar scripts diretamente com `python sync.py` — usar `python -m etls.<fonte>.sync`
 - Não hardcodar caminhos como `H:/Meu Drive` — usar `Path(__file__).parent`
-- **Não finalizar uma tarefa sem atualizar CLAUDE.md, README.md e db/build.sql**
+- **Não finalizar uma tarefa sem atualizar CLAUDE.md, README.md, db/build.sql e skills/**
 
 ---
 
@@ -195,6 +199,8 @@ Para tarefas específicas, consulte os documentos em `skills/`:
 | `skills/infraspeak_db.md` | Escrever queries, entender schema Infraspeak, modificar banco |
 | `skills/infraspeak_api.md` | Construir requisições, entender endpoints e filtros |
 | `skills/infraspeak_etl.md` | Entender fluxos, criar novos ETLs, debugar extrações |
+| `skills/pdv_db.md` | Escrever queries, entender JSONB do PDV, conciliação fiscal |
+| `skills/pdv_etl.md` | Entender estrutura JSON do Simphony, SFTP, comandos PDV |
 
 ---
 
@@ -216,6 +222,10 @@ O `true` final ativa a extração de event registries (necessário para cálculo
 **P: Como sincronizar o PDV de uma data específica?**
 R: `python -m etls.pdv.sync 2026-02-19`
 Sem argumento, sincroniza o dia anterior (padrão de execução diária).
+
+**P: Como fazer backfill do PDV em um intervalo de datas?**
+R: `python -m etls.pdv.history_sync 2026-02-01 2026-02-28`
+Abre uma única conexão SFTP e itera dia a dia. Erros em dias individuais não param o processo. Ao final, exibe total de notas e dias sem arquivo.
 
 **P: Qual é a chave de conciliação entre PDV e SEFAZ?**
 R: `Invoice Data Info 8` no PDV = chave NF-e 44 dígitos = `nota_id` em `pdv_raw_notas`. Quando o ETL SEFAZ estiver implementado, o join será direto: `pdv_raw_notas.nota_id = sefaz_raw_notas.nota_id`.
