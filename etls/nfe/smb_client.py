@@ -19,7 +19,7 @@ def _chave_from_filename(filename):
 HOTEL_SHARES = {
     'CUMBUCO': 'Cumbuco',
     'CHARME':  'Charme',
-    'MAGNA':   'Magna',
+    'MAGNA':   'Magna2',
     'TAIBA':   'Taiba',
 }
 

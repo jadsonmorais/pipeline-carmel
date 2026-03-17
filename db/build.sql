@@ -455,6 +455,51 @@ WHERE action IN ('STARTED', 'RESUMED')
 -- 4. VIEWS PDV / FISCAL / SEFAZ
 -- ------------------------------------------------------------------------------
 
+-- Fiscal: lançamentos (itens) com hotel canônico + join NF-e para chave SEFAZ
+-- Uma linha por item/lançamento; join com nfe_raw_xmls via nNF + serie + hotel
+CREATE OR REPLACE VIEW carmel.v_fiscal_lancamentos AS
+SELECT
+    f.lancamento_id,
+    CASE f.data->>'FKEMPRESA'
+        WHEN '1' THEN 'TAIBA'
+        WHEN '2' THEN 'CHARME'
+        WHEN '3' THEN 'CUMBUCO'
+        WHEN '4' THEN 'MAGNA'
+    END                                               AS hotel,
+    f.data->>'EMPRESA'                                AS empresa,
+    (f.data->>'DTDATAEMISSAO')::date                  AS data_emissao,
+    f.data->>'TIPODEDOCUMENTO'                        AS tipo_documento,
+    f.data->>'ANNUMERODOCUMENTO'                      AS numero_documento,
+    f.data->>'ANSERIE'                                AS serie,
+    f.data->>'ANCFOP'                                 AS cfop,
+    f.data->>'ANCODIGO'                               AS codigo_produto,
+    f.data->>'ANDESCRICAO'                            AS descricao_produto,
+    (f.data->>'QTQUANTIDADECOMERCIAL')::NUMERIC(12,4) AS quantidade,
+    (f.data->>'VLVALORUNITARIOCOMERCIAL')::NUMERIC(12,2) AS valor_unitario,
+    (f.data->>'VLVALORTOTAL')::NUMERIC(12,2)          AS valor_total_item,
+    (f.data->>'VALORDESCONTO')::NUMERIC(12,2)         AS desconto,
+    (f.data->>'VLVALORTTDOCUMENTO')::NUMERIC(12,2)    AS valor_total_documento,
+    -- NF-e (join por número + série + hotel → traz chave 44 dígitos e status SEFAZ)
+    n.nota_id                                         AS chave_nfe,
+    n.data->>'cStat'                                  AS status_sefaz,   -- 100=autorizada
+    n.data->>'nProt'                                  AS protocolo_sefaz,
+    (n.data->>'dhRecbto')::timestamptz                AS recebimento_sefaz,
+    (can.cancelamento_id IS NOT NULL)                 AS cancelada,
+    f.extracted_at
+FROM carmel.fiscal_raw_lancamentos f
+LEFT JOIN carmel.nfe_raw_xmls n
+    ON  n.data->>'nNF'   = f.data->>'ANNUMERODOCUMENTO'
+    AND n.data->>'serie' = f.data->>'ANSERIE'
+    AND n.data->>'hotel' = CASE f.data->>'FKEMPRESA'
+        WHEN '1' THEN 'TAIBA'
+        WHEN '2' THEN 'CHARME'
+        WHEN '3' THEN 'CUMBUCO'
+        WHEN '4' THEN 'MAGNA'
+    END
+LEFT JOIN carmel.nfe_raw_cancelamentos can
+    ON can.data->>'chNFe' = n.nota_id;
+
+
 -- NF-e: visão consolidada — junta XML fiscal + cancelamento + PDV
 -- Uma linha por nota; indica se foi cancelada e se há registro no PDV
 CREATE OR REPLACE VIEW carmel.v_nfe_notas AS

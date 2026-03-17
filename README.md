@@ -224,6 +224,7 @@ python -m etls.fiscal.history_sync 2025-01-01 2026-03-16
 | `carmel.v_trabalho_analitico_operador_ocorrencias` | Infraspeak | Horas trabalhadas por operador em preventivas |
 | `carmel.v_pdv_notas` | PDV | Notas fiscais com campos extraídos: hotel, data, valor, garçom, quarto, ponto de venda |
 | `carmel.v_nfe_notas` | NF-e XMLs | NF-e consolidada: XML fiscal + status cancelamento + conciliação com PDV (uma linha por nota) |
+| `carmel.v_fiscal_lancamentos` | Fiscal CMERP | Itens fiscais com hotel canônico + join NF-e (chave 44 dígitos, status SEFAZ, cancelamento) |
 
 ### Chave de Conciliação PDV ↔ NF-e ↔ SEFAZ
 

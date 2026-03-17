@@ -145,7 +145,7 @@ XMLs de NF-e/NFC-e emitidos pelo PDV e enviados ao fiscal. Lidos via protocolo S
 |----------------------------|---------------|
 | `\\10.197.0.51\Cumbuco`    | CUMBUCO       |
 | `\\10.197.0.51\Charme`     | CHARME        |
-| `\\10.197.0.51\Magna`      | MAGNA         |
+| `\\10.197.0.51\Magna2`     | MAGNA         |
 | `\\10.197.0.51\Taiba`      | TAIBA         |
 
 **Convenção de nome de arquivo**:

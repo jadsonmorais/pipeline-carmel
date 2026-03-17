@@ -48,6 +48,51 @@ Campos retornados pelo export `idExportacao=80` da API CMERP:
 
 ---
 
+## Mapeamento FKEMPRESA → Hotel
+
+| FKEMPRESA | EMPRESA             | Hotel canônico |
+|-----------|---------------------|----------------|
+| `1`       | CARMEL TAÍBA        | TAIBA          |
+| `2`       | CHARME HOSPEDAGEM   | CHARME         |
+| `3`       | CARMEL CUMBUCO      | CUMBUCO        |
+| `4`       | MAGNA PRAIA         | MAGNA          |
+
+---
+
+## View: `carmel.v_fiscal_lancamentos`
+
+View principal do fiscal. Uma linha por item/lançamento, com hotel canônico e join com NF-e para trazer chave de 44 dígitos e status SEFAZ.
+
+**Join com NF-e**: `nNF + serie + hotel` → `nfe_raw_xmls` (traz `nota_id`, `cStat`, `nProt`, `dhRecbto`)
+**Join com cancelamentos**: via `nota_id` → indica se a nota foi cancelada.
+
+Colunas principais:
+
+| Coluna                  | Descrição                                      |
+|-------------------------|------------------------------------------------|
+| `lancamento_id`         | PK (IDLANCAMENTOICMSBASE)                      |
+| `hotel`                 | Hotel canônico (TAIBA/CHARME/CUMBUCO/MAGNA)    |
+| `empresa`               | Nome da empresa no CMERP                       |
+| `data_emissao`          | Data de emissão do documento                   |
+| `tipo_documento`        | Tipo do documento fiscal                       |
+| `numero_documento`      | Número da NF                                   |
+| `serie`                 | Série da NF                                    |
+| `cfop`                  | CFOP da operação                               |
+| `codigo_produto`        | Código do produto/serviço                      |
+| `descricao_produto`     | Descrição do produto/serviço                   |
+| `quantidade`            | Quantidade comercial                           |
+| `valor_unitario`        | Valor unitário                                 |
+| `valor_total_item`      | Valor total do item                            |
+| `desconto`              | Desconto aplicado                              |
+| `valor_total_documento` | Valor total da NF (repete em todos os itens)   |
+| `chave_nfe`             | Chave 44 dígitos (via join NF-e XMLs)          |
+| `status_sefaz`          | 100=autorizada (via join NF-e XMLs)            |
+| `protocolo_sefaz`       | Protocolo de autorização                       |
+| `recebimento_sefaz`     | Data/hora de recebimento na SEFAZ              |
+| `cancelada`             | true/false                                     |
+
+---
+
 ## Queries Úteis
 
 ### Contagem por empresa/hotel
