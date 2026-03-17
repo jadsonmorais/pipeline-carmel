@@ -32,9 +32,7 @@ class SMBShareClient:
     """
 
     def __enter__(self):
-        # smbclient aceita o formato DOMAIN\user diretamente no username
-        username = f'{DOMAIN}\\{USER}' if DOMAIN else USER
-        smbclient.register_session(HOST, username=username, password=PASS)
+        smbclient.register_session(HOST)
         return self
 
     def __exit__(self, *args):
