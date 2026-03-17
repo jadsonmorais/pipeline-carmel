@@ -1,10 +1,19 @@
 import os
+import re
 from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).parent.parent.parent / 'auth' / 'prod' / '.env')
 
 HOST = os.getenv('NFE_SMB_HOST', '10.197.0.51')
+
+_CHAVE_RE = re.compile(r'(\d{44})')
+
+
+def _chave_from_filename(filename):
+    """Extrai os 44 dígitos da chave NF-e do nome do arquivo (mesma lógica do parser)."""
+    m = _CHAVE_RE.search(filename)
+    return m.group(1) if m else filename
 
 # Mapeamento hotel canônico → nome do share SMB
 HOTEL_SHARES = {
@@ -41,7 +50,7 @@ class SMBShareClient:
                 all_files = list(share_path.glob(pattern))
                 if skip_suffix:
                     all_files = [f for f in all_files if f.name.endswith(skip_suffix)]
-                novos = [f for f in all_files if f.stem not in skip_ids]
+                novos = [f for f in all_files if _chave_from_filename(f.name) not in skip_ids]
                 print(f'[NF-e SMB]   {len(all_files)} total, {len(novos)} novos')
                 for xml_path in novos:
                     try:
@@ -63,7 +72,7 @@ class SMBShareClient:
             print(f'[NF-e SMB] [NF-e] Listando {share_name}...')
             try:
                 all_files = [f for f in share_path.glob('*.xml') if not f.name.endswith('-can.xml') and not f.name.startswith('CFe')]
-                novos = [f for f in all_files if f.stem not in skip_ids]
+                novos = [f for f in all_files if _chave_from_filename(f.name) not in skip_ids]
                 print(f'[NF-e SMB]   {len(all_files)} total, {len(novos)} novos')
                 for xml_path in novos:
                     try:
