@@ -97,11 +97,13 @@ FROM carmel.v_nfe_notas;
 
 ## Queries de Validação
 
-### Contagem por hotel
+> **Contexto**: `nfe_raw_xmls` tem histórico completo (fonte de verdade fiscal). `pdv_raw_notas` tem dados a partir de 01/02/2026. O join útil parte sempre do NF-e para o PDV, nunca o inverso.
+
+### Contagem de NF-es por hotel (PDV)
 
 ```sql
 SELECT hotel, COUNT(*) AS total
-FROM carmel.nfe_raw_xmls
+FROM carmel.v_pdv_notas
 GROUP BY 1
 ORDER BY 1;
 ```
@@ -115,58 +117,40 @@ GROUP BY 1
 ORDER BY 1;
 ```
 
-### Visão geral — notas, canceladas e com PDV
+### Gap: NF-e do período PDV sem registro no PDV
+
+NF-e enviadas ao fiscal a partir de uma data que não aparecem no PDV. Casos normais: notas emitidas fora do PDV, estornos antes do envio. Casos suspeitos: volume alto concentrado em hotel/período.
 
 ```sql
 SELECT
-    hotel,
-    COUNT(*)                       AS total_notas,
-    COUNT(*) FILTER (WHERE cancelada)  AS canceladas,
-    COUNT(*) FILTER (WHERE tem_pdv)    AS com_pdv,
-    COUNT(*) FILTER (WHERE NOT tem_pdv AND NOT cancelada) AS sem_pdv_e_ativas
-FROM carmel.v_nfe_notas
+    n.nota_id,
+    n.data->>'hotel'  AS hotel,
+    n.data->>'dhEmi'  AS data_emissao,
+    n.data->>'nNF'    AS numero_nota,
+    n.data->>'vNF'    AS valor
+FROM carmel.nfe_raw_xmls n
+LEFT JOIN carmel.pdv_raw_notas p USING (nota_id)
+WHERE p.nota_id IS NULL
+  AND (n.data->>'dhEmi')::date >= '2026-02-01'
+ORDER BY 3 DESC;
+```
+
+### Overlap: resumo por hotel (período PDV)
+
+```sql
+SELECT
+    n.data->>'hotel'             AS hotel,
+    COUNT(*)                     AS total_nfe,
+    COUNT(p.nota_id)             AS com_pdv,
+    COUNT(*) - COUNT(p.nota_id)  AS sem_pdv
+FROM carmel.nfe_raw_xmls n
+LEFT JOIN carmel.pdv_raw_notas p USING (nota_id)
+WHERE (n.data->>'dhEmi')::date >= '2026-02-01'
 GROUP BY 1
 ORDER BY 1;
 ```
 
-### Notas do PDV que têm XML no fiscal
-
-```sql
-SELECT COUNT(*)
-FROM carmel.nfe_raw_xmls n
-JOIN carmel.pdv_raw_notas p USING (nota_id);
-```
-
-### Notas do PDV sem XML no fiscal (gap)
-
-```sql
-SELECT p.nota_id, p.data->>'hotel' AS hotel, p.data->>'dhEmi' AS dhEmi
-FROM carmel.pdv_raw_notas p
-LEFT JOIN carmel.nfe_raw_xmls n USING (nota_id)
-WHERE n.nota_id IS NULL
-ORDER BY p.data->>'dhEmi' DESC;
-```
-
-### XMLs enviados ao fiscal sem registro no PDV
-
-```sql
-SELECT n.nota_id, n.data->>'hotel' AS hotel, n.data->>'dhEmi' AS dhEmi
-FROM carmel.nfe_raw_xmls n
-LEFT JOIN carmel.pdv_raw_notas p USING (nota_id)
-WHERE p.nota_id IS NULL
-ORDER BY n.data->>'dhEmi' DESC;
-```
-
-### Notas autorizadas (cStat=100)
-
-```sql
-SELECT nota_id, data->>'hotel', data->>'dhEmi', data->>'vNF', data->>'nProt'
-FROM carmel.nfe_raw_xmls
-WHERE data->>'cStat' = '100'
-ORDER BY data->>'dhEmi' DESC;
-```
-
-### Cancelamentos que não têm XML correspondente (inconsistência)
+### Cancelamentos sem NF-e correspondente (inconsistência)
 
 ```sql
 SELECT c.cancelamento_id, c.data->>'chNFe' AS chave_nota, c.data->>'hotel' AS hotel
