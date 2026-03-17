@@ -6,10 +6,10 @@ import smbclient.path
 
 load_dotenv(Path(__file__).parent.parent.parent / 'auth' / 'prod' / '.env')
 
-HOST = os.getenv('NFE_SMB_HOST', '10.197.0.51')
-USER = os.getenv('NFE_SMB_USER')
-PASS = os.getenv('NFE_SMB_PASS')
-DOMAIN = os.getenv('NFE_SMB_DOMAIN', '')
+HOST   = os.getenv('NFE_SMB_HOST', '10.197.0.51')
+USER   = os.getenv('NFE_SMB_USER')       # ex: automacao
+PASS   = os.getenv('NFE_SMB_PASS')
+DOMAIN = os.getenv('NFE_SMB_DOMAIN', '') # ex: MAGNA
 
 # Mapeamento hotel canônico → nome do share SMB
 HOTEL_SHARES = {
@@ -32,11 +32,9 @@ class SMBShareClient:
     """
 
     def __enter__(self):
-        smbclient.register_session(
-            HOST,
-            username=USER,
-            password=PASS,
-        )
+        # smbclient aceita o formato DOMAIN\user diretamente no username
+        username = f'{DOMAIN}\\{USER}' if DOMAIN else USER
+        smbclient.register_session(HOST, username=username, password=PASS)
         return self
 
     def __exit__(self, *args):
