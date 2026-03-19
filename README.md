@@ -225,6 +225,8 @@ python -m etls.fiscal.history_sync 2025-01-01 2026-03-16
 | `carmel.v_pdv_notas` | PDV | Notas fiscais com campos extraídos: hotel, data, valor, garçom, quarto, ponto de venda |
 | `carmel.v_nfe_notas` | NF-e XMLs | NF-e consolidada: XML fiscal + status cancelamento + conciliação com PDV (uma linha por nota) |
 | `carmel.v_fiscal_lancamentos` | Fiscal CMERP | Itens fiscais com hotel canônico + join NF-e (chave 44 dígitos, status SEFAZ, cancelamento) |
+| `carmel.v_vendas_notas` | NF-e + PDV + Fiscal | Consolidação por nota: uma linha por NF-e com status (Autorizada/Cancelada/Pendente SEFAZ), campos PDV (quarto, garçom) e agregado fiscal |
+| `carmel.v_vendas_diario` | v_vendas_notas | Agregação diária por hotel: contagem por status, valor total e presença PDV/Fiscal |
 
 ### Chave de Conciliação PDV ↔ NF-e ↔ SEFAZ
 

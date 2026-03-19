@@ -241,6 +241,7 @@ Para tarefas específicas, consulte os documentos em `skills/`:
 | `skills/nfe_etl.md` | Entender fluxo SMB, shares por hotel, comandos NF-e |
 | `skills/fiscal_db.md` | Escrever queries sobre lançamentos fiscais, mapeamento FKEMPRESA→hotel, view consolidada |
 | `skills/fiscal_etl.md` | Entender API CMERP, headers, parametros, chunking, comandos sync e histórico |
+| `skills/vendas_db.md` | Escrever queries sobre vendas consolidadas, lógica de status, views v_vendas_notas e v_vendas_diario |
 
 ---
 
