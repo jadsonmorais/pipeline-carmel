@@ -629,7 +629,33 @@ GROUP BY hotel, data_emissao::date;
 
 
 -- ------------------------------------------------------------------------------
--- 5. QUERIES DE AUDITORIA E SAÚDE DO BANCO (EXECUTAR MANUALMENTE QUANDO NECESSÁRIO)
+-- 5. ÍNDICES PARA O RELATÓRIO DE DISCREPÂNCIAS
+-- ------------------------------------------------------------------------------
+
+CREATE INDEX IF NOT EXISTS idx_nfe_raw_xmls_data_emissao
+    ON carmel.nfe_raw_xmls (((data->>'dhEmi')::TIMESTAMPTZ));
+
+CREATE INDEX IF NOT EXISTS idx_nfe_raw_xmls_hotel
+    ON carmel.nfe_raw_xmls ((data->>'hotel'));
+
+CREATE INDEX IF NOT EXISTS idx_nfe_raw_xmls_nNF_serie
+    ON carmel.nfe_raw_xmls ((data->>'nNF'), (data->>'serie'));
+
+CREATE INDEX IF NOT EXISTS idx_pdv_raw_notas_data_venda
+    ON carmel.pdv_raw_notas (((data->>'Business Date')::DATE));
+
+CREATE INDEX IF NOT EXISTS idx_pdv_raw_notas_hotel
+    ON carmel.pdv_raw_notas ((data->>'hotel'));
+
+CREATE INDEX IF NOT EXISTS idx_fiscal_raw_lancamentos_numero_serie_empresa
+    ON carmel.fiscal_raw_lancamentos ((data->>'ANNUMERODOCUMENTO'), (data->>'ANSERIE'), (data->>'FKEMPRESA'));
+
+CREATE INDEX IF NOT EXISTS idx_nfe_raw_cancelamentos_chave
+    ON carmel.nfe_raw_cancelamentos ((data->>'chNFe'));
+
+
+-- ------------------------------------------------------------------------------
+-- 6. QUERIES DE AUDITORIA E SAÚDE DO BANCO (EXECUTAR MANUALMENTE QUANDO NECESSÁRIO)
 -- ------------------------------------------------------------------------------
 /*
 -- A. Auditoria de Ocorrências (Scheduled Works) Concluídas >= 2026 sem detalhes
