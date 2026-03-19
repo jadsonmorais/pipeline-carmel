@@ -1,0 +1,4 @@
+CREATE INDEX IF NOT EXISTS idx_pdv_raw_notas_data_venda 
+	ON carmel.pdv_raw_notas ((to_date(data->>'Business Date', 'YYYY-MM-DD')));
+
+    Erro SQL [42P17]: ERROR: functions in index expression must be marked IMMUTABLE

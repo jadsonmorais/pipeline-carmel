@@ -91,6 +91,16 @@ def get_existing_nfe_ids():
     return ids
 
 
+def refresh_mv_fiscal():
+    """Atualiza a materialized view mv_fiscal_lancamentos após carga fiscal."""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("REFRESH MATERIALIZED VIEW carmel.mv_fiscal_lancamentos;")
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
 def mark_failure_as_deleted(failure_id):
     """Atualiza o state do failure para EXCLUIDO nas tabelas raw e de detalhes quando a API retornar 404."""
     conn = get_db_connection()

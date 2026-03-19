@@ -1,0 +1,25 @@
+input:
+SELECT
+    *
+FROM
+    carmel.v_fiscal_lancamentos
+WHERE
+    data_emissao >= NOW() - INTERVAL '30 days';
+
+output: timeout
+
+input:
+SELECT
+    COUNT(*) AS total_itens,
+    COUNT(
+        DISTINCT (
+            data ->> 'ANNUMERODOCUMENTO',
+            data ->> 'ANSERIE',
+            data ->> 'FKEMPRESA'
+        )
+    ) AS notas_unicas
+FROM
+    carmel.fiscal_raw_lancamentos;
+
+output:
+    198266	198266

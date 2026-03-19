@@ -1,14 +1,16 @@
 -- ==============================================================================
--- PROJETO INFRASPEAK INTEGRATION - CARMEL HOTÉIS
+-- PROJETO PIPELINE-CARMEL — INFRASPEAK
 -- ARQUIVO: build.sql
--- DESCRIÇÃO: Script de recriação completa do banco de dados (Tabelas, Views e Auditoria)
--- ATUALIZAÇÃO: Inclusão de event_id nas views analíticas e regras de backlog na auditoria
+-- DESCRIÇÃO: DDL do domínio Infraspeak (tabelas, views, auditoria)
+-- NOTA: PDV / Fiscal / NF-e / SEFAZ → build_pdv.sql
 -- ==============================================================================
+
 
 -- ------------------------------------------------------------------------------
 -- 0. SCHEMA
 -- ------------------------------------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS carmel;
+
 
 -- ------------------------------------------------------------------------------
 -- 1. TABELAS BRUTAS (CAMADA BRONZE / RAW)
@@ -58,51 +60,12 @@ CREATE TABLE IF NOT EXISTS carmel.infraspeak_raw_operators (
 
 
 -- ------------------------------------------------------------------------------
--- PDV / FISCAL / SEFAZ (CAMADA BRONZE / RAW)
--- ------------------------------------------------------------------------------
-
--- PDV Simphony: um registro por nota fiscal emitida no PDV
--- PK = chave NF-e 44 dígitos (Invoice Data Info 8) — chave de conciliação com SEFAZ
-CREATE TABLE IF NOT EXISTS carmel.pdv_raw_notas (
-    nota_id VARCHAR(44) PRIMARY KEY,
-    data JSONB NOT NULL,
-    extracted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- Fiscal CMERP: lançamentos fiscais por empresa/hotel (idExportacao=80)
--- PK = IDLANCAMENTOICMSBASE (string)
-CREATE TABLE IF NOT EXISTS carmel.fiscal_raw_lancamentos (
-    lancamento_id VARCHAR(255) PRIMARY KEY,
-    data          JSONB NOT NULL,
-    extracted_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- NF-e XMLs: arquivos enviados para o fiscal (shares SMB \\10.197.0.51\{Hotel})
--- PK = chave NF-e 44 dígitos — mesma chave de pdv_raw_notas.nota_id
--- data->>'xml_content' contém o XML original completo para auditoria e reprocessamento
-CREATE TABLE IF NOT EXISTS carmel.nfe_raw_xmls (
-    nota_id VARCHAR(44) PRIMARY KEY,
-    data    JSONB NOT NULL,
-    extracted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
--- Cancelamentos NF-e: eventos de cancelamento enviados pela SEFAZ (arquivos *-can.xml)
--- PK = Id do infEvento
--- data->>'chNFe' = chave 44 dígitos da nota cancelada (FK para nfe_raw_xmls.nota_id)
-CREATE TABLE IF NOT EXISTS carmel.nfe_raw_cancelamentos (
-    cancelamento_id VARCHAR(255) PRIMARY KEY,
-    data            JSONB NOT NULL,
-    extracted_at    TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-
--- ------------------------------------------------------------------------------
 -- 2. VIEWS DE DIMENSÃO (CAMADA PRATA/OURO)
 -- ------------------------------------------------------------------------------
 
 -- DIMENSÃO: Operadores
 CREATE OR REPLACE VIEW carmel.v_operadores AS
-SELECT 
+SELECT
     operator_id,
     (data -> 'attributes') ->> 'full_name' AS nome_operador,
     (data -> 'attributes') ->> 'email' AS email,
@@ -121,7 +84,7 @@ FROM carmel.infraspeak_raw_operators;
 -- DIMENSÃO: Planos Mestres de Manutenção
 CREATE OR REPLACE VIEW carmel.v_detalhe_planos_manutencao AS
 WITH union_works AS (
-    SELECT 
+    SELECT
         d.work_id,
         ((d.data -> 'data') -> 'attributes') ->> 'name' AS nome_plano,
         ((d.data -> 'data') -> 'attributes') ->> 'description' AS descricao,
@@ -152,10 +115,10 @@ WITH union_works AS (
         FROM jsonb_array_elements(COALESCE(d.data -> 'included', '[]'::jsonb)) AS inc
         WHERE inc ->> 'type' = 'work_type' LIMIT 1
     ) wt ON true
-    
+
     UNION ALL
-    
-    SELECT 
+
+    SELECT
         w.work_id,
         (w.data -> 'attributes') ->> 'name' AS nome_plano,
         (w.data -> 'attributes') ->> 'description' AS descricao,
@@ -188,7 +151,7 @@ WITH union_works AS (
     ) wt ON true
     WHERE NOT EXISTS (SELECT 1 FROM carmel.infraspeak_raw_work_details d WHERE d.work_id = w.work_id)
 )
-SELECT 
+SELECT
     *,
     CASE
         WHEN local_full_name ~~* 'CARMEL CUMBUCO%' THEN 'CUMBUCO'
@@ -207,7 +170,7 @@ FROM union_works;
 -- FATO: Ocorrências (Scheduled Works)
 CREATE OR REPLACE VIEW carmel.v_detalhe_ocorrencias AS
 WITH union_scheduled AS (
-    SELECT 
+    SELECT
         d.scheduled_work_id,
         (((d.data -> 'data') -> 'attributes') ->> 'work_id')::integer AS work_id,
         ((d.data -> 'data') -> 'attributes') ->> 'state' AS status,
@@ -246,10 +209,10 @@ WITH union_scheduled AS (
         FROM jsonb_array_elements(COALESCE(d.data -> 'included', '[]'::jsonb)) AS inc
         WHERE inc ->> 'type' = 'work_type' LIMIT 1
     ) wt ON true
-    
+
     UNION ALL
-    
-    SELECT 
+
+    SELECT
         sw.scheduled_work_id,
         ((sw.data -> 'attributes') ->> 'work_id')::integer AS work_id,
         (sw.data -> 'attributes') ->> 'state' AS status,
@@ -290,7 +253,7 @@ WITH union_scheduled AS (
     ) wt ON true
     WHERE NOT EXISTS (SELECT 1 FROM carmel.infraspeak_raw_scheduled_work_details d WHERE d.scheduled_work_id = sw.scheduled_work_id)
 )
-SELECT 
+SELECT
     u.scheduled_work_id,
     u.work_id,
     u.status,
@@ -329,9 +292,9 @@ LEFT JOIN carmel.v_detalhe_planos_manutencao p ON u.work_id = p.work_id;
 -- ------------------------------------------------------------------------------
 
 -- ANALÍTICA: Apontamento de Horas - Chamados
-CREATE OR REPLACE VIEW carmel.v_trabalho_analitico_operador_chamados AS 
+CREATE OR REPLACE VIEW carmel.v_trabalho_analitico_operador_chamados AS
 WITH events AS (
-    SELECT 
+    SELECT
         failure_id,
         (val ->> 'id')::bigint AS event_id,
         ((val -> 'attributes') ->> 'operator_id')::integer AS timesheet_owner_id
@@ -340,7 +303,7 @@ WITH events AS (
     WHERE val ->> 'type' = 'event'
 ),
 registries AS (
-    SELECT 
+    SELECT
         failure_id,
         ((val -> 'attributes') ->> 'event_id')::bigint AS event_id,
         (val -> 'attributes') ->> 'action' AS action,
@@ -351,7 +314,7 @@ registries AS (
     WHERE val ->> 'type' = 'event_registry'
 ),
 raw_events AS (
-    SELECT 
+    SELECT
         r.failure_id,
         r.event_id,
         e.timesheet_owner_id AS operator_id,
@@ -363,7 +326,7 @@ raw_events AS (
     WHERE e.timesheet_owner_id IS NOT NULL
 ),
 ordered_events AS (
-    SELECT 
+    SELECT
         failure_id,
         event_id,
         operator_id,
@@ -373,7 +336,7 @@ ordered_events AS (
         lead(action) OVER (PARTITION BY failure_id, event_id ORDER BY event_time, event_registry_id) AS next_action
     FROM raw_events
 )
-SELECT 
+SELECT
     failure_id,
     operator_id,
     action AS status_inicio,
@@ -383,16 +346,16 @@ SELECT
     next_time - event_time AS duracao,
     EXTRACT(epoch FROM next_time - event_time) / 3600::numeric AS horas_decimais
 FROM ordered_events
-WHERE action IN ('STARTED', 'RESUMED') 
-  AND next_action IN ('PAUSED', 'COMPLETED') 
+WHERE action IN ('STARTED', 'RESUMED')
+  AND next_action IN ('PAUSED', 'COMPLETED')
   AND next_time IS NOT NULL;
 
 
 -- ANALÍTICA: Apontamento de Horas - Ocorrências (Preventivas)
-CREATE OR REPLACE VIEW carmel.v_trabalho_analitico_operador_ocorrencias AS 
+CREATE OR REPLACE VIEW carmel.v_trabalho_analitico_operador_ocorrencias AS
 WITH events AS (
     -- 1. Descobre os eventos válidos (Filtra o Evento Mestre Fantasma)
-    SELECT 
+    SELECT
         scheduled_work_id,
         (val ->> 'id')::bigint AS event_id,
         ((val -> 'attributes') ->> 'operator_id')::integer AS timesheet_owner_id
@@ -402,7 +365,7 @@ WITH events AS (
 ),
 registries AS (
     -- 2. Puxa todos os registros de botões clicados
-    SELECT 
+    SELECT
         scheduled_work_id,
         ((val -> 'attributes') ->> 'event_id')::bigint AS event_id,
         (val -> 'attributes') ->> 'action' AS action,
@@ -414,7 +377,7 @@ registries AS (
 ),
 raw_events AS (
     -- 3. Cruza os dados: O registro só passa se o evento pai tiver um dono humano!
-    SELECT 
+    SELECT
         r.scheduled_work_id,
         r.event_id,
         e.timesheet_owner_id AS operator_id, -- Assume o dono real da folha de horas
@@ -426,7 +389,7 @@ raw_events AS (
     WHERE e.timesheet_owner_id IS NOT NULL
 ),
 ordered_events AS (
-    SELECT 
+    SELECT
         scheduled_work_id,
         event_id,
         operator_id,
@@ -436,7 +399,7 @@ ordered_events AS (
         lead(action) OVER (PARTITION BY scheduled_work_id, event_id ORDER BY event_time, event_registry_id) AS next_action
     FROM raw_events
 )
-SELECT 
+SELECT
     scheduled_work_id,
     operator_id,
     action AS status_inicio,
@@ -446,239 +409,36 @@ SELECT
     next_time - event_time AS duracao,
     EXTRACT(epoch FROM next_time - event_time) / 3600::numeric AS horas_decimais
 FROM ordered_events
-WHERE action IN ('STARTED', 'RESUMED') 
-  AND next_action IN ('PAUSED', 'COMPLETED') 
+WHERE action IN ('STARTED', 'RESUMED')
+  AND next_action IN ('PAUSED', 'COMPLETED')
   AND next_time IS NOT NULL;
 
 
 -- ------------------------------------------------------------------------------
--- 4. VIEWS PDV / FISCAL / SEFAZ
--- ------------------------------------------------------------------------------
-
--- Fiscal: lançamentos (itens) com hotel canônico + join NF-e para chave SEFAZ
--- Uma linha por item/lançamento; join com nfe_raw_xmls via nNF + serie + hotel
-CREATE OR REPLACE VIEW carmel.v_fiscal_lancamentos AS
-SELECT
-    f.lancamento_id,
-    CASE f.data->>'FKEMPRESA'
-        WHEN '1' THEN 'TAIBA'
-        WHEN '2' THEN 'CHARME'
-        WHEN '3' THEN 'CUMBUCO'
-        WHEN '4' THEN 'MAGNA'
-    END                                               AS hotel,
-    f.data->>'EMPRESA'                                AS empresa,
-    (f.data->>'DTDATAEMISSAO')::date                  AS data_emissao,
-    f.data->>'TIPODEDOCUMENTO'                        AS tipo_documento,
-    f.data->>'ANNUMERODOCUMENTO'                      AS numero_documento,
-    f.data->>'ANSERIE'                                AS serie,
-    f.data->>'ANCFOP'                                 AS cfop,
-    f.data->>'ANCODIGO'                               AS codigo_produto,
-    f.data->>'ANDESCRICAO'                            AS descricao_produto,
-    (f.data->>'QTQUANTIDADECOMERCIAL')::NUMERIC(12,4) AS quantidade,
-    (f.data->>'VLVALORUNITARIOCOMERCIAL')::NUMERIC(12,2) AS valor_unitario,
-    (f.data->>'VLVALORTOTAL')::NUMERIC(12,2)          AS valor_total_item,
-    (f.data->>'VALORDESCONTO')::NUMERIC(12,2)         AS desconto,
-    (f.data->>'VLVALORTTDOCUMENTO')::NUMERIC(12,2)    AS valor_total_documento,
-    -- NF-e (join por número + série + hotel → traz chave 44 dígitos e status SEFAZ)
-    n.nota_id                                         AS chave_nfe,
-    n.data->>'cStat'                                  AS status_sefaz,   -- 100=autorizada
-    n.data->>'nProt'                                  AS protocolo_sefaz,
-    (n.data->>'dhRecbto')::timestamptz                AS recebimento_sefaz,
-    (can.cancelamento_id IS NOT NULL)                 AS cancelada,
-    f.extracted_at
-FROM carmel.fiscal_raw_lancamentos f
-LEFT JOIN carmel.nfe_raw_xmls n
-    ON  n.data->>'nNF'   = f.data->>'ANNUMERODOCUMENTO'
-    AND n.data->>'serie' = f.data->>'ANSERIE'
-    AND n.data->>'hotel' = CASE f.data->>'FKEMPRESA'
-        WHEN '1' THEN 'TAIBA'
-        WHEN '2' THEN 'CHARME'
-        WHEN '3' THEN 'CUMBUCO'
-        WHEN '4' THEN 'MAGNA'
-    END
-LEFT JOIN carmel.nfe_raw_cancelamentos can
-    ON can.data->>'chNFe' = n.nota_id;
-
-
--- NF-e: visão consolidada — junta XML fiscal + cancelamento + PDV
--- Uma linha por nota; indica se foi cancelada e se há registro no PDV
-CREATE OR REPLACE VIEW carmel.v_nfe_notas AS
-SELECT
-    n.nota_id,
-    n.data->>'hotel'                              AS hotel,
-    (n.data->>'dhEmi')::timestamptz               AS data_emissao,
-    n.data->>'nNF'                                AS numero_nota,
-    n.data->>'serie'                              AS serie,
-    n.data->>'mod'                                AS modelo,           -- 55=NF-e, 65=NFC-e
-    n.data->>'tpAmb'                              AS ambiente,         -- 1=produção, 2=homologação
-    n.data->>'cnpj_emit'                          AS cnpj_emit,
-    n.data->>'nome_emit'                          AS emitente,
-    (n.data->>'vNF')::NUMERIC(12,2)               AS valor_total,
-    n.data->>'nProt'                              AS protocolo_autorizacao,
-    n.data->>'cStat'                              AS status_sefaz,     -- 100=autorizada
-    (n.data->>'dhRecbto')::timestamptz            AS data_recebimento_sefaz,
-    -- Cancelamento
-    (c.cancelamento_id IS NOT NULL)               AS cancelada,
-    (c.data->>'dhEvento')::timestamptz            AS data_cancelamento,
-    c.data->>'nProt'                              AS protocolo_cancelamento,
-    c.data->>'xJust'                              AS justificativa_cancelamento,
-    -- Conciliação com PDV
-    (p.nota_id IS NOT NULL)                       AS tem_pdv,
-    (p.data->>'Business Date')::DATE              AS data_venda_pdv,
-    (p.data->>'Sub Total 1')::NUMERIC(12,2)       AS valor_pdv,
-    p.data->>'Local Revenue Center Name'          AS ponto_venda,
-    n.extracted_at
-FROM carmel.nfe_raw_xmls n
-LEFT JOIN carmel.nfe_raw_cancelamentos c ON c.data->>'chNFe' = n.nota_id
-LEFT JOIN carmel.pdv_raw_notas p USING (nota_id);
-
-
--- PDV: notas fiscais emitidas pelo Simphony (uma linha por nota/comanda)
-CREATE OR REPLACE VIEW carmel.v_pdv_notas AS
-SELECT
-    nota_id                                                        AS chave_nfe,
-    data->>'hotel'                                                 AS hotel,
-    (data->>'Business Date')::DATE                                 AS data_venda,
-    data->>'FCR Invoice Number'                                    AS numero_nota,
-    (data->>'Check Number')::BIGINT                                AS numero_comanda,
-    (data->>'Sub Total 1')::NUMERIC(12,2)                         AS subtotal_1,
-    (data->>'Sub Total 2')::NUMERIC(12,2)                         AS subtotal_2,
-    (data->>'Sub Total 3')::NUMERIC(12,2)                         AS subtotal_3,
-    (data->>'Sub Total 6')::NUMERIC(12,2)                         AS subtotal_6,
-    (data->>'Tax Total 1')::NUMERIC(12,2)                         AS imposto_1,
-    data->>'Local Revenue Center Name'                             AS ponto_venda,
-    data->>'Revenue Center Master Name'                            AS ponto_venda_master,
-    data->>'Invoice Data Info 5'                                   AS quarto,
-    data->>'Invoice Data Info 6'                                   AS garcom,
-    (data->>'Invoice Status')::SMALLINT                            AS status_nota,
-    data->>'uwsName'                                               AS terminal_pdv,
-    data->>'source_file'                                           AS arquivo_origem,
-    extracted_at
-FROM carmel.pdv_raw_notas;
-
-
--- ------------------------------------------------------------------------------
--- 4B. VIEWS CONSOLIDADAS DE VENDAS
--- ------------------------------------------------------------------------------
-
--- Vendas: consolidação por nota (NF-e base + PDV + Fiscal agregado)
-CREATE OR REPLACE VIEW carmel.v_vendas_notas AS
-WITH fiscal_agg AS (
-    SELECT
-        chave_nfe,
-        TRUE                                        AS tem_fiscal,
-        COUNT(*)                                    AS qtd_itens,
-        MODE() WITHIN GROUP (ORDER BY cfop)         AS cfop_principal
-    FROM carmel.v_fiscal_lancamentos
-    WHERE chave_nfe IS NOT NULL
-    GROUP BY chave_nfe
-)
-SELECT
-    n.nota_id,
-    n.hotel,
-    n.data_emissao,
-    n.numero_nota,
-    n.serie,
-    n.modelo,
-    n.valor_total,
-    n.status_sefaz,
-    n.protocolo_autorizacao,
-    n.data_recebimento_sefaz,
-    n.cancelada,
-    n.data_cancelamento,
-    n.justificativa_cancelamento,
-    n.tem_pdv,
-    n.data_venda_pdv,
-    n.valor_pdv,
-    n.ponto_venda,
-    p.subtotal_1,
-    p.subtotal_2,
-    p.subtotal_3,
-    p.subtotal_6,
-    p.imposto_1,
-    p.quarto,
-    p.garcom,
-    COALESCE(f.tem_fiscal, FALSE)                   AS tem_fiscal,
-    COALESCE(f.qtd_itens, 0)                        AS qtd_itens,
-    f.cfop_principal,
-    CASE
-        WHEN n.cancelada            THEN 'Cancelada'
-        WHEN n.status_sefaz = '100' THEN 'Autorizada'
-        ELSE                             'Pendente SEFAZ'
-    END                                             AS status
-FROM carmel.v_nfe_notas n
-LEFT JOIN carmel.v_pdv_notas p ON p.chave_nfe = n.nota_id
-LEFT JOIN fiscal_agg f          ON f.chave_nfe = n.nota_id;
-
-
--- Vendas: agregação diária por hotel
-CREATE OR REPLACE VIEW carmel.v_vendas_diario AS
-SELECT
-    hotel,
-    data_emissao::date                                      AS data,
-    COUNT(*)                                                AS total_notas,
-    COUNT(*) FILTER (WHERE status = 'Autorizada')           AS notas_autorizadas,
-    COUNT(*) FILTER (WHERE status = 'Cancelada')            AS notas_canceladas,
-    COUNT(*) FILTER (WHERE status = 'Pendente SEFAZ')       AS notas_pendentes,
-    COALESCE(SUM(valor_total) FILTER (WHERE status != 'Cancelada'), 0) AS valor_total_dia,
-    COUNT(*) FILTER (WHERE tem_pdv)                         AS notas_com_pdv,
-    COUNT(*) FILTER (WHERE tem_fiscal)                      AS notas_com_fiscal
-FROM carmel.v_vendas_notas
-WHERE data_emissao IS NOT NULL
-GROUP BY hotel, data_emissao::date;
-
-
--- ------------------------------------------------------------------------------
--- 5. ÍNDICES PARA O RELATÓRIO DE DISCREPÂNCIAS
--- ------------------------------------------------------------------------------
-
-CREATE INDEX IF NOT EXISTS idx_nfe_raw_xmls_data_emissao
-    ON carmel.nfe_raw_xmls (((data->>'dhEmi')::TIMESTAMPTZ));
-
-CREATE INDEX IF NOT EXISTS idx_nfe_raw_xmls_hotel
-    ON carmel.nfe_raw_xmls ((data->>'hotel'));
-
-CREATE INDEX IF NOT EXISTS idx_nfe_raw_xmls_nNF_serie
-    ON carmel.nfe_raw_xmls ((data->>'nNF'), (data->>'serie'));
-
-CREATE INDEX IF NOT EXISTS idx_pdv_raw_notas_data_venda
-    ON carmel.pdv_raw_notas (((data->>'Business Date')::DATE));
-
-CREATE INDEX IF NOT EXISTS idx_pdv_raw_notas_hotel
-    ON carmel.pdv_raw_notas ((data->>'hotel'));
-
-CREATE INDEX IF NOT EXISTS idx_fiscal_raw_lancamentos_numero_serie_empresa
-    ON carmel.fiscal_raw_lancamentos ((data->>'ANNUMERODOCUMENTO'), (data->>'ANSERIE'), (data->>'FKEMPRESA'));
-
-CREATE INDEX IF NOT EXISTS idx_nfe_raw_cancelamentos_chave
-    ON carmel.nfe_raw_cancelamentos ((data->>'chNFe'));
-
-
--- ------------------------------------------------------------------------------
--- 6. QUERIES DE AUDITORIA E SAÚDE DO BANCO (EXECUTAR MANUALMENTE QUANDO NECESSÁRIO)
+-- 5. QUERIES DE AUDITORIA E SAÚDE DO BANCO (EXECUTAR MANUALMENTE QUANDO NECESSÁRIO)
 -- ------------------------------------------------------------------------------
 /*
 -- A. Auditoria de Ocorrências (Scheduled Works) Concluídas >= 2026 sem detalhes
 -- Nota: Contempla backlog de anos anteriores resolvido no ano atual
-SELECT scheduled_work_id 
-FROM carmel.infraspeak_raw_scheduled_works 
+SELECT scheduled_work_id
+FROM carmel.infraspeak_raw_scheduled_works
 WHERE scheduled_work_id NOT IN (SELECT scheduled_work_id FROM carmel.infraspeak_raw_scheduled_work_details)
   AND UPPER(data -> 'attributes' ->> 'state') = 'COMPLETED'
   AND (
        (data -> 'attributes' ->> 'start_date')::date >= '2026-01-01'
-       OR 
+       OR
        (data -> 'attributes' ->> 'completed_date')::date >= '2026-01-01'
   );
 
 -- B. Auditoria de Chamados (Failures) criados >= 2026 sem detalhes
-SELECT failure_id 
-FROM carmel.infraspeak_raw_failures 
+SELECT failure_id
+FROM carmel.infraspeak_raw_failures
 WHERE failure_id NOT IN (SELECT failure_id FROM carmel.infraspeak_raw_failure_details)
   AND (data -> 'attributes' ->> 'date')::date >= '2026-01-01';
 
 -- C. Auditoria de Planos Mestres (Works) atualizados >= 2026 sem detalhes
-SELECT work_id 
-FROM carmel.infraspeak_raw_works 
+SELECT work_id
+FROM carmel.infraspeak_raw_works
 WHERE work_id NOT IN (SELECT work_id FROM carmel.infraspeak_raw_work_details)
   AND (data -> 'attributes' ->> 'updated_at')::date >= '2026-01-01';
 */

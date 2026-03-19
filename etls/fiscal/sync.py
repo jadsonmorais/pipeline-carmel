@@ -27,6 +27,8 @@ def run(date_ini_str=None, date_fim_str=None):
     if records:
         utils.upsert_raw_data('fiscal_raw_lancamentos', 'lancamento_id', records, 'lancamento')
         print(f'[FISCAL] {len(records)} lançamentos persistidos')
+    utils.refresh_mv_fiscal()
+    print('[FISCAL] mv_fiscal_lancamentos atualizada')
     print('--- Fiscal Sync finalizado ---')
 
 

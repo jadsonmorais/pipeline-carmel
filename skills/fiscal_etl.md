@@ -84,6 +84,7 @@ python -m etls.fiscal.history_sync 2025-01-01 2026-03-16
 2. Resposta: lista de dicts — cada item é um lançamento com `IDLANCAMENTOICMSBASE` como PK
 3. `_to_records()` adiciona campo `id = str(IDLANCAMENTOICMSBASE)` (necessário para o upsert)
 4. `utils.upsert_raw_data('fiscal_raw_lancamentos', 'lancamento_id', records, 'lancamento')`
+5. `utils.refresh_mv_fiscal()` → `REFRESH MATERIALIZED VIEW carmel.mv_fiscal_lancamentos`
 
 ---
 

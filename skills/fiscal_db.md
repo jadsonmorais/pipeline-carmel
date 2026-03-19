@@ -59,9 +59,17 @@ Campos retornados pelo export `idExportacao=80` da API CMERP:
 
 ---
 
+## Materialized View: `carmel.mv_fiscal_lancamentos`
+
+Join pesado materializado (~198k lançamentos × ~41k XMLs). Criada com `WITH NO DATA`; o ETL faz o primeiro `REFRESH` após carga inicial. Índice único em `lancamento_id` permite `REFRESH CONCURRENTLY` no futuro.
+
+Atualizada automaticamente pelo ETL fiscal (`sync.py` e `history_sync.py`) via `shared.db.refresh_mv_fiscal()`.
+
+---
+
 ## View: `carmel.v_fiscal_lancamentos`
 
-View principal do fiscal. Uma linha por item/lançamento, com hotel canônico e join com NF-e para trazer chave de 44 dígitos e status SEFAZ.
+Wrapper fino sobre `mv_fiscal_lancamentos` — definida como `SELECT * FROM carmel.mv_fiscal_lancamentos`. Mantém compatibilidade total com todo código existente (`v_vendas_notas`, `v_vendas_diario`, queries ad-hoc).
 
 **Join com NF-e**: `nNF + serie + hotel` → `nfe_raw_xmls` (traz `nota_id`, `cStat`, `nProt`, `dhRecbto`)
 **Join com cancelamentos**: via `nota_id` → indica se a nota foi cancelada.

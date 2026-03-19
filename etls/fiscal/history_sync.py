@@ -33,6 +33,8 @@ def run(date_ini_str, date_fim_str):
         except Exception as e:
             print(f'[FISCAL]   ERRO no chunk {cursor} → {chunk_fim}: {e}')
         cursor = chunk_fim + timedelta(days=1)
+    utils.refresh_mv_fiscal()
+    print('[FISCAL] mv_fiscal_lancamentos atualizada')
     print(f'--- Fiscal History Sync finalizado: {total} lançamentos no total ---')
 
 

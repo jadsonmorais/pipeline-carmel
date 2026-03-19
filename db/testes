@@ -1,0 +1,39 @@
+entrada:
+  SELECT
+      'pdv_raw_notas'           AS tabela, COUNT(*) FROM carmel.pdv_raw_notas                                                    
+  UNION ALL SELECT                                      
+      'nfe_raw_xmls'            , COUNT(*) FROM carmel.nfe_raw_xmls                                                                
+      UNION ALL SELECT                             
+      'nfe_raw_cancelamentos'   , COUNT(*) FROM carmel.nfe_raw_cancelamentos                                                       
+      UNION ALL SELECT                             
+      'fiscal_raw_lancamentos'  , COUNT(*) FROM carmel.fiscal_raw_lancamentos;
+
+saida:
+    fiscal_raw_lancamentos	198266
+    pdv_raw_notas	20490
+    nfe_raw_xmls	40972
+    nfe_raw_cancelamentos	55
+
+entrada:
+    SELECT * FROM carmel.v_vendas_notas                                                                                            
+  WHERE data_emissao >= NOW() - INTERVAL '30 days'
+  LIMIT 500;
+saida:
+    timeout
+
+
+entrada:
+    SELECT * FROM carmel.v_fiscal_lancamentos
+    WHERE data_emissao >= NOW() - INTERVAL '30 days';
+saida:
+    timeout
+
+entrada:
+ SELECT                                                                                                                               COUNT(*)                                    AS total_xmls,                                                                 
+      COUNT(p.nota_id)                            AS com_pdv,                                                                    
+      COUNT(*) - COUNT(p.nota_id)                 AS sem_pdv                                                                       FROM carmel.nfe_raw_xmls n                                
+  LEFT JOIN carmel.pdv_raw_notas p USING (nota_id);
+
+
+saida:
+    40972	20427	20545
