@@ -1,0 +1,66 @@
+-- ==============================================================================
+-- POWER BI — MEDIDAS DAX
+-- Criar uma tabela "_Medidas" no Power BI e adicionar cada medida abaixo.
+-- ==============================================================================
+
+
+-- ------------------------------------------------------------------------------
+-- TABELA CALENDÁRIO (criar como Nova Tabela no Power BI)
+-- ------------------------------------------------------------------------------
+
+-- dCalendario =
+-- CALENDAR(DATE(2024, 1, 1), TODAY())
+--
+-- Colunas calculadas na tabela dCalendario:
+-- Ano        = YEAR(dCalendario[Date])
+-- Mês        = MONTH(dCalendario[Date])
+-- Mês Nome   = FORMAT(dCalendario[Date], "MMM/YYYY")
+-- Trimestre  = "T" & QUARTER(dCalendario[Date])
+--
+-- Relações (muitos para um, filtro simples):
+-- dCalendario[Date] → v_vendas_notas[data_emissao]
+-- dCalendario[Date] → v_vendas_diario[data]
+-- dCalendario[Date] → v_fiscal_lancamentos[data_emissao]
+
+
+-- ------------------------------------------------------------------------------
+-- MEDIDAS BASE
+-- ------------------------------------------------------------------------------
+
+Faturamento Total =
+CALCULATE(
+    SUM(v_vendas_notas[valor_total]),
+    v_vendas_notas[status] <> "Cancelada"
+)
+
+Notas Autorizadas =
+CALCULATE(
+    COUNTROWS(v_vendas_notas),
+    v_vendas_notas[status] = "Autorizada"
+)
+
+Notas Canceladas =
+CALCULATE(
+    COUNTROWS(v_vendas_notas),
+    v_vendas_notas[status] = "Cancelada"
+)
+
+Pendentes SEFAZ =
+CALCULATE(
+    COUNTROWS(v_vendas_notas),
+    v_vendas_notas[status] = "Pendente SEFAZ"
+)
+
+NF-e sem Fiscal =
+CALCULATE(
+    COUNTROWS(v_vendas_notas),
+    v_vendas_notas[tem_fiscal] = FALSE,
+    v_vendas_notas[status] = "Autorizada"
+)
+
+NF-e sem PDV =
+CALCULATE(
+    COUNTROWS(v_vendas_notas),
+    v_vendas_notas[tem_pdv] = FALSE,
+    v_vendas_notas[status] = "Autorizada"
+)
