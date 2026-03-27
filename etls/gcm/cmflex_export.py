@@ -65,6 +65,7 @@ def _fetch_consumo_interno(date_str, location_name=None):
                     SELECT data FROM carmel.gcm_raw_line_items
                     WHERE data->>'businessDate' = %s
                       AND data->>'orderTypeName' = 'Consumo Interno'
+                      AND (data->>'lineTotal')::numeric <> 0
                       AND data->>'locationName' = %s
                     ORDER BY (data->>'guestCheckID')::bigint, (data->>'lineNum')::int
                 """, (date_str, location_name))
@@ -73,6 +74,7 @@ def _fetch_consumo_interno(date_str, location_name=None):
                     SELECT data FROM carmel.gcm_raw_line_items
                     WHERE data->>'businessDate' = %s
                       AND data->>'orderTypeName' = 'Consumo Interno'
+                      AND (data->>'lineTotal')::numeric <> 0
                     ORDER BY (data->>'locationName'), (data->>'guestCheckID')::bigint, (data->>'lineNum')::int
                 """, (date_str,))
             return [row[0] for row in cur.fetchall()]
@@ -129,7 +131,7 @@ def _build_pdv_venda(check_items, location_name):
     itens_el = SubElement(venda, 'Itens')
     for item in check_items:
         item_el = SubElement(itens_el, 'Item')
-        qty = item.get('numerator') or 1
+        qty = item.get('lineCount') or 1
         line_total = float(item.get('lineTotal') or 0)
         unit_price = line_total / qty if qty else 0
         is_void = item.get('isVoidFlag') == 1
