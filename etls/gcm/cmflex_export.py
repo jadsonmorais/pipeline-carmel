@@ -7,11 +7,21 @@ Uso:
 
 Gera um arquivo por hotel em output/{hotel}_cmflex_{data}.xml
 
-Variáveis de ambiente para serial ECF (chave = locationName em maiúsculas com espaços → _):
+Variáveis de ambiente por hotel (chave = locationName em maiúsculas com espaços → _):
     GCM_ECF_SERIAL_CARMEL_CHARME_RESORT
     GCM_ECF_SERIAL_CARMEL_CUMBUCO_WIND_RESORT
     GCM_ECF_SERIAL_CARMEL_TAIBA_EXCLUSIVE_RESORT
     GCM_ECF_SERIAL_MAGNA_PRAIA_HOTEL
+
+    GCM_CNPJ_CARMEL_CHARME_RESORT
+    GCM_CNPJ_CARMEL_CUMBUCO_WIND_RESORT
+    GCM_CNPJ_CARMEL_TAIBA_EXCLUSIVE_RESORT
+    GCM_CNPJ_MAGNA_PRAIA_HOTEL
+
+    GCM_ADQUIRENTE_CARMEL_CHARME_RESORT
+    GCM_ADQUIRENTE_CARMEL_CUMBUCO_WIND_RESORT
+    GCM_ADQUIRENTE_CARMEL_TAIBA_EXCLUSIVE_RESORT
+    GCM_ADQUIRENTE_MAGNA_PRAIA_HOTEL
 """
 import os
 import sys
@@ -40,9 +50,18 @@ def _ecf_env_key(location_name):
 
 
 def _get_ecf_serial(location_name):
-    """Retorna o serial ECF configurado para o locationName, ou um fallback."""
     env_key = _ecf_env_key(location_name)
     return os.getenv(env_key, f'ECF_{location_name.replace(" ", "_")}')
+
+
+def _get_cnpj(location_name):
+    sanitized = location_name.upper().replace(' ', '_')
+    return os.getenv(f'GCM_CNPJ_{sanitized}', '')
+
+
+def _get_adquirente(location_name):
+    sanitized = location_name.upper().replace(' ', '_')
+    return os.getenv(f'GCM_ADQUIRENTE_{sanitized}', '')
 
 
 def _get_connection():
@@ -117,8 +136,8 @@ def _build_pdv_venda(check_items, location_name):
     all_void = all(item.get('isVoidFlag') == 1 for item in check_items)
 
     SubElement(venda, 'NumeroDeSerieECF').text = ecf_serial
-    SubElement(venda, 'NomeAdquirente').text = ''
-    SubElement(venda, 'CPFCNPJAdquirente').text = ''
+    SubElement(venda, 'NomeAdquirente').text = _get_adquirente(location_name)
+    SubElement(venda, 'CPFCNPJAdquirente').text = _get_cnpj(location_name)
     SubElement(venda, 'NumeroCOO').text = check_num
     SubElement(venda, 'DataEmissao').text = dt_emissao
     SubElement(venda, 'ValorTotal').text = _format_value(total)
