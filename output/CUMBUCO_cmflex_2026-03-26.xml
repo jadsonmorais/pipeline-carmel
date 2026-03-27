@@ -2,8 +2,8 @@
 <Vendas>
 	<PDVVenda>
 		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
-		<NomeAdquirente />
-		<CPFCNPJAdquirente />
+		<NomeAdquirente>CARMEL WIND RESORT LTDA</NomeAdquirente>
+		<CPFCNPJAdquirente>19.253.187/0001-63</CPFCNPJAdquirente>
 		<NumeroCOO>10021916</NumeroCOO>
 		<DataEmissao>2026-03-26T13:18:54-03:00</DataEmissao>
 		<ValorTotal>18</ValorTotal>
@@ -41,8 +41,8 @@
 	</PDVVenda>
 	<PDVVenda>
 		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
-		<NomeAdquirente />
-		<CPFCNPJAdquirente />
+		<NomeAdquirente>CARMEL WIND RESORT LTDA</NomeAdquirente>
+		<CPFCNPJAdquirente>19.253.187/0001-63</CPFCNPJAdquirente>
 		<NumeroCOO>10021917</NumeroCOO>
 		<DataEmissao>2026-03-26T13:19:24-03:00</DataEmissao>
 		<ValorTotal>35</ValorTotal>
@@ -80,8 +80,8 @@
 	</PDVVenda>
 	<PDVVenda>
 		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
-		<NomeAdquirente />
-		<CPFCNPJAdquirente />
+		<NomeAdquirente>CARMEL WIND RESORT LTDA</NomeAdquirente>
+		<CPFCNPJAdquirente>19.253.187/0001-63</CPFCNPJAdquirente>
 		<NumeroCOO>10021918</NumeroCOO>
 		<DataEmissao>2026-03-26T13:19:49-03:00</DataEmissao>
 		<ValorTotal>45</ValorTotal>
@@ -119,8 +119,8 @@
 	</PDVVenda>
 	<PDVVenda>
 		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
-		<NomeAdquirente />
-		<CPFCNPJAdquirente />
+		<NomeAdquirente>CARMEL WIND RESORT LTDA</NomeAdquirente>
+		<CPFCNPJAdquirente>19.253.187/0001-63</CPFCNPJAdquirente>
 		<NumeroCOO>10021919</NumeroCOO>
 		<DataEmissao>2026-03-26T13:20:15-03:00</DataEmissao>
 		<ValorTotal>35</ValorTotal>
@@ -158,8 +158,8 @@
 	</PDVVenda>
 	<PDVVenda>
 		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
-		<NomeAdquirente />
-		<CPFCNPJAdquirente />
+		<NomeAdquirente>CARMEL WIND RESORT LTDA</NomeAdquirente>
+		<CPFCNPJAdquirente>19.253.187/0001-63</CPFCNPJAdquirente>
 		<NumeroCOO>10021920</NumeroCOO>
 		<DataEmissao>2026-03-26T13:20:37-03:00</DataEmissao>
 		<ValorTotal>18</ValorTotal>
@@ -197,8 +197,8 @@
 	</PDVVenda>
 	<PDVVenda>
 		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
-		<NomeAdquirente />
-		<CPFCNPJAdquirente />
+		<NomeAdquirente>CARMEL WIND RESORT LTDA</NomeAdquirente>
+		<CPFCNPJAdquirente>19.253.187/0001-63</CPFCNPJAdquirente>
 		<NumeroCOO>10021922</NumeroCOO>
 		<DataEmissao>2026-03-26T13:22:17-03:00</DataEmissao>
 		<ValorTotal>1016</ValorTotal>
@@ -266,8 +266,8 @@
 	</PDVVenda>
 	<PDVVenda>
 		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
-		<NomeAdquirente />
-		<CPFCNPJAdquirente />
+		<NomeAdquirente>CARMEL WIND RESORT LTDA</NomeAdquirente>
+		<CPFCNPJAdquirente>19.253.187/0001-63</CPFCNPJAdquirente>
 		<NumeroCOO>10021995</NumeroCOO>
 		<DataEmissao>2026-03-26T20:09:03-03:00</DataEmissao>
 		<ValorTotal>496</ValorTotal>

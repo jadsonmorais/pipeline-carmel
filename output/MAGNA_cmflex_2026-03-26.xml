@@ -2,8 +2,8 @@
 <Vendas>
 	<PDVVenda>
 		<NumeroDeSerieECF>MAGNA.SRV-CAPS</NumeroDeSerieECF>
-		<NomeAdquirente />
-		<CPFCNPJAdquirente />
+		<NomeAdquirente>MAGNA PRAIA HOTEL LTDA</NomeAdquirente>
+		<CPFCNPJAdquirente>02.333.096/0001-35</CPFCNPJAdquirente>
 		<NumeroCOO>10004639</NumeroCOO>
 		<DataEmissao>2026-03-26T13:31:16-03:00</DataEmissao>
 		<ValorTotal>66</ValorTotal>

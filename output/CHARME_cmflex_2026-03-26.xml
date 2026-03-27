@@ -2,8 +2,8 @@
 <Vendas>
 	<PDVVenda>
 		<NumeroDeSerieECF>CHARME.SERVIDOR-CAPS</NumeroDeSerieECF>
-		<NomeAdquirente />
-		<CPFCNPJAdquirente />
+		<NomeAdquirente>CARMEL RESORT HOSPEDAGEM LTDA</NomeAdquirente>
+		<CPFCNPJAdquirente>27.794.852/0001-54</CPFCNPJAdquirente>
 		<NumeroCOO>10008379</NumeroCOO>
 		<DataEmissao>2026-03-26T07:44:57-03:00</DataEmissao>
 		<ValorTotal>160</ValorTotal>
@@ -71,8 +71,8 @@
 	</PDVVenda>
 	<PDVVenda>
 		<NumeroDeSerieECF>CHARME.SERVIDOR-CAPS</NumeroDeSerieECF>
-		<NomeAdquirente />
-		<CPFCNPJAdquirente />
+		<NomeAdquirente>CARMEL RESORT HOSPEDAGEM LTDA</NomeAdquirente>
+		<CPFCNPJAdquirente>27.794.852/0001-54</CPFCNPJAdquirente>
 		<NumeroCOO>10008382</NumeroCOO>
 		<DataEmissao>2026-03-26T12:47:06-03:00</DataEmissao>
 		<ValorTotal>559</ValorTotal>
@@ -215,8 +215,8 @@
 	</PDVVenda>
 	<PDVVenda>
 		<NumeroDeSerieECF>CHARME.SERVIDOR-CAPS</NumeroDeSerieECF>
-		<NomeAdquirente />
-		<CPFCNPJAdquirente />
+		<NomeAdquirente>CARMEL RESORT HOSPEDAGEM LTDA</NomeAdquirente>
+		<CPFCNPJAdquirente>27.794.852/0001-54</CPFCNPJAdquirente>
 		<NumeroCOO>10008393</NumeroCOO>
 		<DataEmissao>2026-03-26T18:28:36-03:00</DataEmissao>
 		<ValorTotal>454</ValorTotal>
@@ -299,8 +299,8 @@
 	</PDVVenda>
 	<PDVVenda>
 		<NumeroDeSerieECF>CHARME.SERVIDOR-CAPS</NumeroDeSerieECF>
-		<NomeAdquirente />
-		<CPFCNPJAdquirente />
+		<NomeAdquirente>CARMEL RESORT HOSPEDAGEM LTDA</NomeAdquirente>
+		<CPFCNPJAdquirente>27.794.852/0001-54</CPFCNPJAdquirente>
 		<NumeroCOO>10008395</NumeroCOO>
 		<DataEmissao>2026-03-26T18:43:56-03:00</DataEmissao>
 		<ValorTotal>510</ValorTotal>
