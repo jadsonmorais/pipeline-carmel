@@ -1,0 +1,175 @@
+{
+	"EmpresaId": 2,
+	"TipoDeProcessamento": "ProcVendaParaBaixaEstoque",
+	"ExecucaoImediata": false,
+	"NomeParaArmazenamentoDoConteudo": "AlmoxVendaParaBaixaEstoque",
+	"ConteudoCompactado": false,
+	"MensagemDoSolicitante": "IncluirProcVendaParaBaixaEstoque",
+	"DataDoMovimento": "2026-03-26",
+	"CodigoDaEmpresa": "",
+	"ChaveDeAcesso": "",
+	"Vendas": {
+		"Venda": [
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1230008",
+				"UnidadeMedida": "UN",
+				"Quantidade": 2.0,
+				"ValorUnitario": 22.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1230018",
+				"UnidadeMedida": "UN",
+				"Quantidade": 8.0,
+				"ValorUnitario": 7.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1230011",
+				"UnidadeMedida": "UN",
+				"Quantidade": 10.0,
+				"ValorUnitario": 6.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1250001",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 13.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1250001",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 13.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1040034",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 85.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1040027",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 62.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1070029",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 202.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1080016",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 109.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1190030",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 36.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1190005",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 39.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1420006",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 75.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1440006",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 145.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1450004",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 162.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1500002",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 72.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1410025",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 109.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1410011",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 82.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1460011",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 155.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1440051",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 132.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "CHARME.SERVIDOR-CAPS",
+				"CodigoExterno": "1510008",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 32.0
+			}
+		]
+	}
+}

@@ -1,0 +1,135 @@
+{
+	"EmpresaId": 3,
+	"TipoDeProcessamento": "ProcVendaParaBaixaEstoque",
+	"ExecucaoImediata": false,
+	"NomeParaArmazenamentoDoConteudo": "AlmoxVendaParaBaixaEstoque",
+	"ConteudoCompactado": false,
+	"MensagemDoSolicitante": "IncluirProcVendaParaBaixaEstoque",
+	"DataDoMovimento": "2026-03-26",
+	"CodigoDaEmpresa": "",
+	"ChaveDeAcesso": "",
+	"Vendas": {
+		"Venda": [
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "1230005",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 18.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "1210010",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 35.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "1230027",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 45.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "1210010",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 35.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "1230005",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 18.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "1230021",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 36.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "1230020",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 130.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "1230009",
+				"UnidadeMedida": "UN",
+				"Quantidade": 50.0,
+				"ValorUnitario": 17.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "1260030",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 85.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "1260022",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 52.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "1070035",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 269.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "1190013",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 36.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "1190017",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 29.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "3040002",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 13.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "WIND.SRV-CAPS",
+				"CodigoExterno": "3010009",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 12.0
+			}
+		]
+	}
+}

@@ -1,0 +1,63 @@
+{
+	"EmpresaId": 4,
+	"TipoDeProcessamento": "ProcVendaParaBaixaEstoque",
+	"ExecucaoImediata": false,
+	"NomeParaArmazenamentoDoConteudo": "AlmoxVendaParaBaixaEstoque",
+	"ConteudoCompactado": false,
+	"MensagemDoSolicitante": "IncluirProcVendaParaBaixaEstoque",
+	"DataDoMovimento": "2026-03-26",
+	"CodigoDaEmpresa": "",
+	"ChaveDeAcesso": "",
+	"Vendas": {
+		"Venda": [
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "MAGNA.SRV-CAPS",
+				"CodigoExterno": "3040003",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 11.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "MAGNA.SRV-CAPS",
+				"CodigoExterno": "3040003",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 11.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "MAGNA.SRV-CAPS",
+				"CodigoExterno": "3040003",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 11.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "MAGNA.SRV-CAPS",
+				"CodigoExterno": "3040003",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 11.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "MAGNA.SRV-CAPS",
+				"CodigoExterno": "3040003",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 11.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "MAGNA.SRV-CAPS",
+				"CodigoExterno": "3040005",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 11.0
+			}
+		]
+	}
+}
