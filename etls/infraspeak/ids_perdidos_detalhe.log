@@ -1,0 +1,27 @@
+2026-03-19 16:05:42 | scheduled_work | ID: 182353707 | Erro: connection to server at "10.197.3.2", port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+2026-03-19 16:05:57 | scheduled_work | ID: 182353708 | Erro: connection to server at "10.197.3.2", port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+2026-03-19 16:06:11 | scheduled_work | ID: 182353709 | Erro: connection to server at "10.197.3.2", port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+2026-03-19 16:06:25 | scheduled_work | ID: 182353710 | Erro: connection to server at "10.197.3.2", port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+2026-03-19 16:06:40 | scheduled_work | ID: 182353711 | Erro: connection to server at "10.197.3.2", port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+2026-03-19 16:06:54 | scheduled_work | ID: 182353712 | Erro: connection to server at "10.197.3.2", port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+2026-03-19 16:07:08 | scheduled_work | ID: 182353713 | Erro: connection to server at "10.197.3.2", port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+2026-03-19 16:07:23 | scheduled_work | ID: 182353714 | Erro: connection to server at "10.197.3.2", port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+2026-03-19 17:37:05 | failure | ID: 17101254 | Erro: 404 Client Error: Not Found for url: https://api.infraspeak.com/v3/failures/17101254?expanded=operator%2Clocation%2Cclient%2Cproblem%2Cevents.registry
+2026-03-20 17:54:47 | failure | ID: 15783448 | Erro: 404 Client Error: Not Found for url: https://api.infraspeak.com/v3/failures/15783448?expanded=operator%2Clocation%2Cclient%2Cproblem%2Cevents.registry
+2026-03-23 17:20:25 | failure | ID: 17052477 | Erro: 404 Client Error: Not Found for url: https://api.infraspeak.com/v3/failures/17052477?expanded=operator%2Clocation%2Cclient%2Cproblem%2Cevents.registry

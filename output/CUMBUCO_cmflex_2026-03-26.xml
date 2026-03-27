@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Vendas>
+	<PDVVenda>
+		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
+		<NomeAdquirente />
+		<CPFCNPJAdquirente />
+		<NumeroCOO>10021916</NumeroCOO>
+		<DataEmissao>2026-03-26T13:18:54-03:00</DataEmissao>
+		<ValorTotal>18</ValorTotal>
+		<ValorDesconto>0</ValorDesconto>
+		<ValorAcrescimo>0</ValorAcrescimo>
+		<Cancelado>false</Cancelado>
+		<IndicadorTipoAcrescimo>Valor</IndicadorTipoAcrescimo>
+		<IndicadorTipoDesconto>Valor</IndicadorTipoDesconto>
+		<Itens>
+			<Item>
+				<CodigoProduto>1230005</CodigoProduto>
+				<DescricaoProduto>Mini Bolo Aniversário</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>18</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>18</ValorTotalLiquido>
+				<TotalizadorParcial>001</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+		</Itens>
+		<Meios>
+			<MeioDePagamento>
+				<NumeroSequencial>0</NumeroSequencial>
+				<Descricao>Consumo Interno</Descricao>
+				<ValorPago>18</ValorPago>
+				<ValorEstornado>0</ValorEstornado>
+				<IndicadorEstorno>Nao</IndicadorEstorno>
+			</MeioDePagamento>
+		</Meios>
+	</PDVVenda>
+	<PDVVenda>
+		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
+		<NomeAdquirente />
+		<CPFCNPJAdquirente />
+		<NumeroCOO>10021917</NumeroCOO>
+		<DataEmissao>2026-03-26T13:19:24-03:00</DataEmissao>
+		<ValorTotal>35</ValorTotal>
+		<ValorDesconto>0</ValorDesconto>
+		<ValorAcrescimo>0</ValorAcrescimo>
+		<Cancelado>false</Cancelado>
+		<IndicadorTipoAcrescimo>Valor</IndicadorTipoAcrescimo>
+		<IndicadorTipoDesconto>Valor</IndicadorTipoDesconto>
+		<Itens>
+			<Item>
+				<CodigoProduto>1210010</CodigoProduto>
+				<DescricaoProduto>Trufas Especiais</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>35</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>35</ValorTotalLiquido>
+				<TotalizadorParcial>001</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+		</Itens>
+		<Meios>
+			<MeioDePagamento>
+				<NumeroSequencial>0</NumeroSequencial>
+				<Descricao>Consumo Interno</Descricao>
+				<ValorPago>35</ValorPago>
+				<ValorEstornado>0</ValorEstornado>
+				<IndicadorEstorno>Nao</IndicadorEstorno>
+			</MeioDePagamento>
+		</Meios>
+	</PDVVenda>
+	<PDVVenda>
+		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
+		<NomeAdquirente />
+		<CPFCNPJAdquirente />
+		<NumeroCOO>10021918</NumeroCOO>
+		<DataEmissao>2026-03-26T13:19:49-03:00</DataEmissao>
+		<ValorTotal>45</ValorTotal>
+		<ValorDesconto>0</ValorDesconto>
+		<ValorAcrescimo>0</ValorAcrescimo>
+		<Cancelado>false</Cancelado>
+		<IndicadorTipoAcrescimo>Valor</IndicadorTipoAcrescimo>
+		<IndicadorTipoDesconto>Valor</IndicadorTipoDesconto>
+		<Itens>
+			<Item>
+				<CodigoProduto>1230027</CodigoProduto>
+				<DescricaoProduto>Mimo coracao</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>45</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>45</ValorTotalLiquido>
+				<TotalizadorParcial>001</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+		</Itens>
+		<Meios>
+			<MeioDePagamento>
+				<NumeroSequencial>0</NumeroSequencial>
+				<Descricao>Consumo Interno</Descricao>
+				<ValorPago>45</ValorPago>
+				<ValorEstornado>0</ValorEstornado>
+				<IndicadorEstorno>Nao</IndicadorEstorno>
+			</MeioDePagamento>
+		</Meios>
+	</PDVVenda>
+	<PDVVenda>
+		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
+		<NomeAdquirente />
+		<CPFCNPJAdquirente />
+		<NumeroCOO>10021919</NumeroCOO>
+		<DataEmissao>2026-03-26T13:20:15-03:00</DataEmissao>
+		<ValorTotal>35</ValorTotal>
+		<ValorDesconto>0</ValorDesconto>
+		<ValorAcrescimo>0</ValorAcrescimo>
+		<Cancelado>false</Cancelado>
+		<IndicadorTipoAcrescimo>Valor</IndicadorTipoAcrescimo>
+		<IndicadorTipoDesconto>Valor</IndicadorTipoDesconto>
+		<Itens>
+			<Item>
+				<CodigoProduto>1210010</CodigoProduto>
+				<DescricaoProduto>Trufas Especiais</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>35</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>35</ValorTotalLiquido>
+				<TotalizadorParcial>001</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+		</Itens>
+		<Meios>
+			<MeioDePagamento>
+				<NumeroSequencial>0</NumeroSequencial>
+				<Descricao>Consumo Interno</Descricao>
+				<ValorPago>35</ValorPago>
+				<ValorEstornado>0</ValorEstornado>
+				<IndicadorEstorno>Nao</IndicadorEstorno>
+			</MeioDePagamento>
+		</Meios>
+	</PDVVenda>
+	<PDVVenda>
+		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
+		<NomeAdquirente />
+		<CPFCNPJAdquirente />
+		<NumeroCOO>10021920</NumeroCOO>
+		<DataEmissao>2026-03-26T13:20:37-03:00</DataEmissao>
+		<ValorTotal>18</ValorTotal>
+		<ValorDesconto>0</ValorDesconto>
+		<ValorAcrescimo>0</ValorAcrescimo>
+		<Cancelado>false</Cancelado>
+		<IndicadorTipoAcrescimo>Valor</IndicadorTipoAcrescimo>
+		<IndicadorTipoDesconto>Valor</IndicadorTipoDesconto>
+		<Itens>
+			<Item>
+				<CodigoProduto>1230005</CodigoProduto>
+				<DescricaoProduto>Mini Bolo Aniversário</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>18</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>18</ValorTotalLiquido>
+				<TotalizadorParcial>001</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+		</Itens>
+		<Meios>
+			<MeioDePagamento>
+				<NumeroSequencial>0</NumeroSequencial>
+				<Descricao>Consumo Interno</Descricao>
+				<ValorPago>18</ValorPago>
+				<ValorEstornado>0</ValorEstornado>
+				<IndicadorEstorno>Nao</IndicadorEstorno>
+			</MeioDePagamento>
+		</Meios>
+	</PDVVenda>
+	<PDVVenda>
+		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
+		<NomeAdquirente />
+		<CPFCNPJAdquirente />
+		<NumeroCOO>10021922</NumeroCOO>
+		<DataEmissao>2026-03-26T13:22:17-03:00</DataEmissao>
+		<ValorTotal>1016</ValorTotal>
+		<ValorDesconto>0</ValorDesconto>
+		<ValorAcrescimo>0</ValorAcrescimo>
+		<Cancelado>false</Cancelado>
+		<IndicadorTipoAcrescimo>Valor</IndicadorTipoAcrescimo>
+		<IndicadorTipoDesconto>Valor</IndicadorTipoDesconto>
+		<Itens>
+			<Item>
+				<CodigoProduto>1230021</CodigoProduto>
+				<DescricaoProduto>Agua saborizada</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>36</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>36</ValorTotalLiquido>
+				<TotalizadorParcial>001</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+			<Item>
+				<CodigoProduto>1230020</CodigoProduto>
+				<DescricaoProduto>Frutas hospitalidade Baixa</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>130</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>130</ValorTotalLiquido>
+				<TotalizadorParcial>001</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+			<Item>
+				<CodigoProduto>1230009</CodigoProduto>
+				<DescricaoProduto>Cocadinha</DescricaoProduto>
+				<Quantidade>50</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>17</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>850</ValorTotalLiquido>
+				<TotalizadorParcial>001</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+		</Itens>
+		<Meios>
+			<MeioDePagamento>
+				<NumeroSequencial>0</NumeroSequencial>
+				<Descricao>Consumo Interno</Descricao>
+				<ValorPago>1016</ValorPago>
+				<ValorEstornado>0</ValorEstornado>
+				<IndicadorEstorno>Nao</IndicadorEstorno>
+			</MeioDePagamento>
+		</Meios>
+	</PDVVenda>
+	<PDVVenda>
+		<NumeroDeSerieECF>WIND.SRV-CAPS</NumeroDeSerieECF>
+		<NomeAdquirente />
+		<CPFCNPJAdquirente />
+		<NumeroCOO>10021995</NumeroCOO>
+		<DataEmissao>2026-03-26T20:09:03-03:00</DataEmissao>
+		<ValorTotal>496</ValorTotal>
+		<ValorDesconto>0</ValorDesconto>
+		<ValorAcrescimo>0</ValorAcrescimo>
+		<Cancelado>false</Cancelado>
+		<IndicadorTipoAcrescimo>Valor</IndicadorTipoAcrescimo>
+		<IndicadorTipoDesconto>Valor</IndicadorTipoDesconto>
+		<Itens>
+			<Item>
+				<CodigoProduto>1260030</CodigoProduto>
+				<DescricaoProduto>Taco de Tapioca e Camarao</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>85</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>85</ValorTotalLiquido>
+				<TotalizadorParcial>001</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+			<Item>
+				<CodigoProduto>1260022</CodigoProduto>
+				<DescricaoProduto>Queijo Coalho e Caju</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>52</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>52</ValorTotalLiquido>
+				<TotalizadorParcial>001</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+			<Item>
+				<CodigoProduto>1070035</CodigoProduto>
+				<DescricaoProduto>Moqueca de peixe e camarao 2 pessoas</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>269</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>269</ValorTotalLiquido>
+				<TotalizadorParcial>001</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+			<Item>
+				<CodigoProduto>1190013</CodigoProduto>
+				<DescricaoProduto>Petit Gateau Doce de Leite</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>36</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>36</ValorTotalLiquido>
+				<TotalizadorParcial>001</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+			<Item>
+				<CodigoProduto>1190017</CodigoProduto>
+				<DescricaoProduto>Verrine de chia e iogurte</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>29</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>29</ValorTotalLiquido>
+				<TotalizadorParcial>001</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+			<Item>
+				<CodigoProduto>3040002</CodigoProduto>
+				<DescricaoProduto>Coca Cola Zero</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>13</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>13</ValorTotalLiquido>
+				<TotalizadorParcial>003</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+			<Item>
+				<CodigoProduto>3010009</CodigoProduto>
+				<DescricaoProduto>Agua Com Gas Lata</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>12</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>12</ValorTotalLiquido>
+				<TotalizadorParcial>003</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+		</Itens>
+		<Meios>
+			<MeioDePagamento>
+				<NumeroSequencial>0</NumeroSequencial>
+				<Descricao>Consumo Interno</Descricao>
+				<ValorPago>496</ValorPago>
+				<ValorEstornado>0</ValorEstornado>
+				<IndicadorEstorno>Nao</IndicadorEstorno>
+			</MeioDePagamento>
+		</Meios>
+	</PDVVenda>
+</Vendas>

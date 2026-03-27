@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Vendas>
+	<PDVVenda>
+		<NumeroDeSerieECF>MAGNA.SRV-CAPS</NumeroDeSerieECF>
+		<NomeAdquirente />
+		<CPFCNPJAdquirente />
+		<NumeroCOO>10004639</NumeroCOO>
+		<DataEmissao>2026-03-26T13:31:16-03:00</DataEmissao>
+		<ValorTotal>66</ValorTotal>
+		<ValorDesconto>0</ValorDesconto>
+		<ValorAcrescimo>0</ValorAcrescimo>
+		<Cancelado>false</Cancelado>
+		<IndicadorTipoAcrescimo>Valor</IndicadorTipoAcrescimo>
+		<IndicadorTipoDesconto>Valor</IndicadorTipoDesconto>
+		<Itens>
+			<Item>
+				<CodigoProduto>3040003</CodigoProduto>
+				<DescricaoProduto>Coca Zero 350 ml </DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>11</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>11</ValorTotalLiquido>
+				<TotalizadorParcial>003</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+			<Item>
+				<CodigoProduto>3040003</CodigoProduto>
+				<DescricaoProduto>Coca Zero 350 ml </DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>11</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>11</ValorTotalLiquido>
+				<TotalizadorParcial>003</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+			<Item>
+				<CodigoProduto>3040003</CodigoProduto>
+				<DescricaoProduto>Coca Zero 350 ml </DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>11</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>11</ValorTotalLiquido>
+				<TotalizadorParcial>003</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+			<Item>
+				<CodigoProduto>3040003</CodigoProduto>
+				<DescricaoProduto>Coca Zero 350 ml </DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>11</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>11</ValorTotalLiquido>
+				<TotalizadorParcial>003</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+			<Item>
+				<CodigoProduto>3040003</CodigoProduto>
+				<DescricaoProduto>Coca Zero 350 ml </DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>11</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>11</ValorTotalLiquido>
+				<TotalizadorParcial>003</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+			<Item>
+				<CodigoProduto>3040005</CodigoProduto>
+				<DescricaoProduto>Guarana Zero 350 ml</DescricaoProduto>
+				<Quantidade>1</Quantidade>
+				<Unidade>UN</Unidade>
+				<ValorUnitario>11</ValorUnitario>
+				<ValorDesconto>0</ValorDesconto>
+				<ValorAcrescimo>0</ValorAcrescimo>
+				<ValorTotalLiquido>11</ValorTotalLiquido>
+				<TotalizadorParcial>003</TotalizadorParcial>
+				<Cancelado>false</Cancelado>
+				<QuantidadeCancelada>0</QuantidadeCancelada>
+				<ValorCancelado>0</ValorCancelado>
+				<IndicadorArredTruc>Arredondamento</IndicadorArredTruc>
+			</Item>
+		</Itens>
+		<Meios>
+			<MeioDePagamento>
+				<NumeroSequencial>0</NumeroSequencial>
+				<Descricao>Consumo Interno</Descricao>
+				<ValorPago>66</ValorPago>
+				<ValorEstornado>0</ValorEstornado>
+				<IndicadorEstorno>Nao</IndicadorEstorno>
+			</MeioDePagamento>
+		</Meios>
+	</PDVVenda>
+</Vendas>
