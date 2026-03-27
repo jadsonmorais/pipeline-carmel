@@ -2,10 +2,16 @@
 Gerador de XML CMFlex para importação de vendas de Consumo Interno.
 
 Uso:
-    python -m etls.gcm.cmflex_export 2026-03-26          # todos os hotéis
-    python -m etls.gcm.cmflex_export 2026-03-26 CARM     # só Charme (locationRef)
+    python -m etls.gcm.cmflex_export 2026-03-26                     # todos os hotéis
+    python -m etls.gcm.cmflex_export 2026-03-26 "CARMEL CHARME RESORT"  # só Charme
 
 Gera um arquivo por hotel em output/{hotel}_cmflex_{data}.xml
+
+Variáveis de ambiente para serial ECF (chave = locationName em maiúsculas com espaços → _):
+    GCM_ECF_SERIAL_CARMEL_CHARME_RESORT
+    GCM_ECF_SERIAL_CARMEL_CUMBUCO_WIND_RESORT
+    GCM_ECF_SERIAL_CARMEL_TAIBA_EXCLUSIVE_RESORT
+    GCM_ECF_SERIAL_MAGNA_PRAIA_HOTEL
 """
 import os
 import sys
@@ -18,20 +24,25 @@ from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).parent.parent.parent / 'auth' / 'prod' / '.env')
 
-# Número de série ECF fixo por hotel (configurável via env)
-ECF_SERIALS = {
-    'CARM':    os.getenv('GCM_ECF_SERIAL_CARM',    'ECF_CARM'),
-    'CUMBUCO': os.getenv('GCM_ECF_SERIAL_CUMBUCO', 'ECF_CUMBUCO'),
-    'TAIBA':   os.getenv('GCM_ECF_SERIAL_TAIBA',   'ECF_TAIBA'),
-    'MAGN':    os.getenv('GCM_ECF_SERIAL_MAGN',    'ECF_MAGN'),
+# Mapeamento locationName → nome canônico do hotel (para nomear o arquivo de saída)
+LOCATION_NAME_TO_HOTEL = {
+    'CARMEL CHARME RESORT':              'CHARME',
+    'CARMEL CUMBUCO WIND RESORT':        'CUMBUCO',
+    'CARMEL TAIBA EXCLUSIVE RESORT':     'TAIBA',
+    'MAGNA PRAIA HOTEL':                 'MAGNA',
 }
 
-LOCATION_TO_HOTEL = {
-    'CARM':    'CHARME',
-    'CUMBUCO': 'CUMBUCO',
-    'TAIBA':   'TAIBA',
-    'MAGN':    'MAGNA',
-}
+
+def _ecf_env_key(location_name):
+    """Converte locationName em nome de variável de ambiente. Ex: 'CARMEL CHARME RESORT' → 'GCM_ECF_SERIAL_CARMEL_CHARME_RESORT'."""
+    sanitized = location_name.upper().replace(' ', '_')
+    return f'GCM_ECF_SERIAL_{sanitized}'
+
+
+def _get_ecf_serial(location_name):
+    """Retorna o serial ECF configurado para o locationName, ou um fallback."""
+    env_key = _ecf_env_key(location_name)
+    return os.getenv(env_key, f'ECF_{location_name.replace(" ", "_")}')
 
 
 def _get_connection():
@@ -44,25 +55,25 @@ def _get_connection():
     )
 
 
-def _fetch_consumo_interno(date_str, location_ref=None):
-    """Retorna line items de Consumo Interno para a data, agrupados por locationRef."""
+def _fetch_consumo_interno(date_str, location_name=None):
+    """Retorna line items de Consumo Interno para a data, opcionalmente filtrado por locationName."""
     conn = _get_connection()
     try:
         with conn.cursor() as cur:
-            if location_ref:
+            if location_name:
                 cur.execute("""
                     SELECT data FROM carmel.gcm_raw_line_items
                     WHERE data->>'businessDate' = %s
                       AND data->>'orderTypeName' = 'Consumo Interno'
-                      AND data->>'locationRef' = %s
+                      AND data->>'locationName' = %s
                     ORDER BY (data->>'guestCheckID')::bigint, (data->>'lineNum')::int
-                """, (date_str, location_ref))
+                """, (date_str, location_name))
             else:
                 cur.execute("""
                     SELECT data FROM carmel.gcm_raw_line_items
                     WHERE data->>'businessDate' = %s
                       AND data->>'orderTypeName' = 'Consumo Interno'
-                    ORDER BY (data->>'locationRef'), (data->>'guestCheckID')::bigint, (data->>'lineNum')::int
+                    ORDER BY (data->>'locationName'), (data->>'guestCheckID')::bigint, (data->>'lineNum')::int
                 """, (date_str,))
             return [row[0] for row in cur.fetchall()]
     finally:
@@ -91,14 +102,14 @@ def _format_value(v):
         return str(v)
 
 
-def _build_pdv_venda(check_items, location_ref):
+def _build_pdv_venda(check_items, location_name):
     """Constrói o elemento <PDVVenda> para uma comanda."""
     venda = Element('PDVVenda')
 
     first = check_items[0]
     check_num = str(first.get('checkNum', 0)).zfill(6)
     dt_emissao = _format_datetime(first.get('transactionDateTime', ''))
-    ecf_serial = ECF_SERIALS.get(location_ref, f'ECF_{location_ref}')
+    ecf_serial = _get_ecf_serial(location_name)
 
     total = sum(float(item.get('lineTotal') or 0) for item in check_items)
     all_void = all(item.get('isVoidFlag') == 1 for item in check_items)
@@ -149,18 +160,18 @@ def _build_pdv_venda(check_items, location_ref):
     return venda
 
 
-def generate(date_str, location_ref=None):
+def generate(date_str, location_name=None):
     """Gera XMLs CMFlex para todos os hotéis (ou só o informado) na data."""
-    items = _fetch_consumo_interno(date_str, location_ref)
+    items = _fetch_consumo_interno(date_str, location_name)
 
     if not items:
         print(f'[GCM CMFlex] Nenhum item de Consumo Interno encontrado para {date_str}')
         return
 
-    # Agrupar por locationRef → guestCheckID → [line items]
+    # Agrupar por locationName → guestCheckID → [line items]
     by_location = defaultdict(lambda: defaultdict(list))
     for item in items:
-        loc = item.get('locationRef', 'UNKNOWN')
+        loc = item.get('locationName', 'UNKNOWN')
         check_id = item.get('guestCheckID')
         by_location[loc][check_id].append(item)
 
@@ -168,7 +179,7 @@ def generate(date_str, location_ref=None):
     output_dir.mkdir(exist_ok=True)
 
     for loc, checks in by_location.items():
-        hotel_name = LOCATION_TO_HOTEL.get(loc, loc)
+        hotel_name = LOCATION_NAME_TO_HOTEL.get(loc, loc.replace(' ', '_'))
         root = Element('Vendas')
 
         for check_id, check_items in checks.items():
@@ -190,9 +201,9 @@ def generate(date_str, location_ref=None):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print('Uso: python -m etls.gcm.cmflex_export <data> [locationRef]')
+        print('Uso: python -m etls.gcm.cmflex_export <data> [locationName]')
         print('Ex:  python -m etls.gcm.cmflex_export 2026-03-26')
-        print('Ex:  python -m etls.gcm.cmflex_export 2026-03-26 CARM')
+        print('Ex:  python -m etls.gcm.cmflex_export 2026-03-26 "CARMEL CHARME RESORT"')
         sys.exit(1)
 
     date_arg = sys.argv[1]
