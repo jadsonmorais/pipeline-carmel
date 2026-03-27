@@ -15,7 +15,7 @@ etls/gcm/
   parser.py          — parse do JSON GCM → lista de line items
   sync.py            — sincronização diária
   history_sync.py    — backfill por intervalo de datas
-  cmflex_export.py   — gerador de XML CMFlex para Consumo Interno
+  cmflex_export.py   — gerador de JSON CMFlex para Consumo Interno
 ```
 
 ---
@@ -79,49 +79,61 @@ python -m etls.gcm.sync 2026-03-26
 # Backfill de intervalo
 python -m etls.gcm.history_sync 2026-01-01 2026-03-26
 
-# Gerar XML CMFlex para todos os hotéis
+# Gerar JSON CMFlex para todos os hotéis
 python -m etls.gcm.cmflex_export 2026-03-26
 
-# Gerar XML CMFlex só para Charme
-python -m etls.gcm.cmflex_export 2026-03-26 CARM
+# Gerar JSON CMFlex só para Charme
+python -m etls.gcm.cmflex_export 2026-03-26 "CARMEL CHARME RESORT"
 ```
 
 ---
 
 ## Export CMFlex (`cmflex_export.py`)
 
-Filtra itens de `orderTypeName = 'Consumo Interno'`, agrupa por comanda (`guestCheckID`) e gera um `<PDVVenda>` por comanda no formato exigido pelo CMFlex ERP.
+Filtra itens de `orderTypeName = 'Consumo Interno'` com `lineTotal <> 0` e gera uma lista flat de vendas por hotel no formato JSON exigido pelo CMFlex ERP (`TipoDeProcessamento = ProcVendaParaBaixaEstoque`).
 
-**Saída:** `output/{hotel}_cmflex_{data}.xml`
+**Saída:** `output/{hotel}_cmflex_{data}.json`
 
 **Variáveis de ambiente necessárias (`auth/prod/.env`):**
 
+Chave = `locationName.upper().replace(' ', '_')`, ex: `CARMEL_CHARME_RESORT`
+
 ```
-GCM_ECF_SERIAL_CARM=<serial do ECF para o Charme>
-GCM_ECF_SERIAL_CUMBUCO=<serial do ECF para o Cumbuco>
-GCM_ECF_SERIAL_TAIBA=<serial do ECF para o Taiba>
-GCM_ECF_SERIAL_MAGN=<serial do ECF para o Magna>
+GCM_ECF_SERIAL_CARMEL_CHARME_RESORT=CHARME.SERVIDOR-CAPS
+GCM_ECF_SERIAL_CARMEL_CUMBUCO_WIND_RESORT=WIND.SRV-CAPS
+GCM_ECF_SERIAL_CARMEL_TAIBA_EXCLUSIVE_RESORT=TAIBA.TAIBA-CIPO
+GCM_ECF_SERIAL_MAGNA_PRAIA_HOTEL=MAGNA.SRV-CAPS
+
+GCM_EMPRESA_ID_CARMEL_CHARME_RESORT=<int>
+GCM_EMPRESA_ID_CARMEL_CUMBUCO_WIND_RESORT=<int>
+GCM_EMPRESA_ID_CARMEL_TAIBA_EXCLUSIVE_RESORT=<int>
+GCM_EMPRESA_ID_MAGNA_PRAIA_HOTEL=<int>
+
+GCM_CODIGO_EMPRESA_CARMEL_CHARME_RESORT=<string, ex: POS003>
+GCM_CODIGO_EMPRESA_CARMEL_CUMBUCO_WIND_RESORT=<string>
+GCM_CODIGO_EMPRESA_CARMEL_TAIBA_EXCLUSIVE_RESORT=<string>
+GCM_CODIGO_EMPRESA_MAGNA_PRAIA_HOTEL=<string>
+
+GCM_CHAVE_ACESSO_CARMEL_CHARME_RESORT=<UUID>
+GCM_CHAVE_ACESSO_CARMEL_CUMBUCO_WIND_RESORT=<UUID>
+GCM_CHAVE_ACESSO_CARMEL_TAIBA_EXCLUSIVE_RESORT=<UUID>
+GCM_CHAVE_ACESSO_MAGNA_PRAIA_HOTEL=<UUID>
 ```
 
-Se não configurados, o fallback é `ECF_{locationRef}`.
+**Mapeamento GCM → CMFlex JSON:**
 
-**Mapeamento GCM → CMFlex XML:**
-
-| Campo CMFlex | Origem GCM |
+| Campo CMFlex JSON | Origem |
 |---|---|
-| `NumeroDeSerieECF` | Env var `GCM_ECF_SERIAL_{locationRef}` |
-| `NumeroCOO` | `checkNum` (zero-padded 6 dígitos) |
-| `DataEmissao` | `transactionDateTime` + `-03:00` |
-| `ValorTotal` | Soma de `lineTotal` da comanda |
-| `CodigoProduto` | `menuItemNum` |
-| `DescricaoProduto` | `menuItemName1` |
-| `Quantidade` | `numerator` |
-| `ValorUnitario` | `lineTotal / numerator` |
-| `ValorTotalLiquido` | `lineTotal` |
-| `TotalizadorParcial` | `majorGroupNum` (zero-padded 3 dígitos) |
-| `Cancelado` | `isVoidFlag == 1` |
-| `MeioDePagamento/Descricao` | `"Consumo Interno"` (fixo) |
-| `ValorPago` | Soma de `lineTotal` da comanda |
+| `EmpresaId` | Env `GCM_EMPRESA_ID_*` (inteiro) |
+| `CodigoDaEmpresa` | Env `GCM_CODIGO_EMPRESA_*` |
+| `ChaveDeAcesso` | Env `GCM_CHAVE_ACESSO_*` |
+| `DataDoMovimento` | Argumento `date_str` |
+| `CodigoPDV` | `revenueCenterNum` (string) |
+| `EmissordoCupom` | Env `GCM_ECF_SERIAL_*` |
+| `CodigoExterno` | `menuItemNum` (string) |
+| `UnidadeMedida` | `"UN"` (fixo) |
+| `Quantidade` | `lineCount` (float) |
+| `ValorUnitario` | `lineTotal / lineCount` (float) |
 
 ---
 

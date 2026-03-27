@@ -292,8 +292,8 @@ R: `python -m etls.gcm.sync 2026-03-26` — baixa todos os arquivos `{Hotel}GCM_
 **P: Como fazer backfill do GCM?**
 R: `python -m etls.gcm.history_sync 2026-01-01 2026-03-26` — itera dia a dia com uma única conexão SFTP.
 
-**P: Como gerar o XML CMFlex de Consumo Interno?**
-R: `python -m etls.gcm.cmflex_export 2026-03-26` — consulta o banco, filtra `orderTypeName = 'Consumo Interno'`, agrupa por comanda e gera `output/{hotel}_cmflex_{data}.xml` para cada hotel com dados. Para só um hotel: `python -m etls.gcm.cmflex_export 2026-03-26 CARM`.
+**P: Como gerar o JSON CMFlex de Consumo Interno?**
+R: `python -m etls.gcm.cmflex_export 2026-03-26` — consulta o banco, filtra `orderTypeName = 'Consumo Interno'` com `lineTotal <> 0` e gera `output/{hotel}_cmflex_{data}.json` para cada hotel com dados. Para só um hotel: `python -m etls.gcm.cmflex_export 2026-03-26 "CARMEL CHARME RESORT"`.
 
 **P: O que é preciso configurar para o export CMFlex funcionar?**
-R: Adicionar em `auth/prod/.env` as variáveis `GCM_ECF_SERIAL_CARM`, `GCM_ECF_SERIAL_CUMBUCO`, `GCM_ECF_SERIAL_TAIBA`, `GCM_ECF_SERIAL_MAGN` com os seriais ECF de cada hotel no CMFlex. Sem elas o fallback é `ECF_{locationRef}`.
+R: Adicionar em `auth/prod/.env` por hotel (chave = locationName sanitizado, ex: `CARMEL_CHARME_RESORT`): `GCM_ECF_SERIAL_*` (EmissordoCupom, ex: "CHARME.SERVIDOR-CAPS"), `GCM_EMPRESA_ID_*` (inteiro), `GCM_CODIGO_EMPRESA_*` (ex: "POS003"), `GCM_CHAVE_ACESSO_*` (UUID). Ver `skills/gcm_etl.md` para lista completa.

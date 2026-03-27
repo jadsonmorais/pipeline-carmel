@@ -1,0 +1,327 @@
+{
+	"EmpresaId": 6,
+	"TipoDeProcessamento": "ProcVendaParaBaixaEstoque",
+	"ExecucaoImediata": false,
+	"NomeParaArmazenamentoDoConteudo": "AlmoxVendaParaBaixaEstoque",
+	"ConteudoCompactado": false,
+	"MensagemDoSolicitante": "IncluirProcVendaParaBaixaEstoque",
+	"DataDoMovimento": "2026-03-15",
+	"CodigoDaEmpresa": "POS003",
+	"ChaveDeAcesso": "ec8f94e8-cd0f-4215-92de-1209d7628bc0",
+	"Vendas": {
+		"Venda": [
+			{
+				"CodigoPDV": "2",
+				"EmissordoCupom": "Restaurante 365 CBA",
+				"CodigoExterno": "137",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 3.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",
+				"CodigoExterno": "70",
+				"UnidadeMedida": "UN",
+				"Quantidade": 2.0,
+				"ValorUnitario": 7.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",
+				"CodigoExterno": "29",
+				"UnidadeMedida": "UN",
+				"Quantidade": 2.0,
+				"ValorUnitario": 15.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",
+				"CodigoExterno": "87",
+				"UnidadeMedida": "UN",
+				"Quantidade": 7.0,
+				"ValorUnitario": 7.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",
+				"CodigoExterno": "10",				
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 6.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",
+				"CodigoExterno": "238",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 30.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "12",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 20.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "28",
+				"UnidadeMedida": "UN",
+				"Quantidade": 7.0,
+				"ValorUnitario": 30.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "30",
+				"UnidadeMedida": "UN",
+				"Quantidade": 11.0,
+				"ValorUnitario": 13.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "1",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 20.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "85",
+				"UnidadeMedida": "UN",
+				"Quantidade": 3.0,
+				"ValorUnitario": 55.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "27",
+				"UnidadeMedida": "UN",
+				"Quantidade": 2.0,
+				"ValorUnitario": 30.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "392",
+				"UnidadeMedida": "UN",
+				"Quantidade": 2.0,
+				"ValorUnitario": 20.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "123",
+				"UnidadeMedida": "UN",
+				"Quantidade": 2.0,
+				"ValorUnitario": 6.0
+			},
+			{
+				"CodigoPDV": "2",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "140",
+				"UnidadeMedida": "UN",
+				"Quantidade": 6.0,
+				"ValorUnitario": 6.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "161",
+				"UnidadeMedida": "UN",
+				"Quantidade": 2.0,
+				"ValorUnitario": 8.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "117",
+				"UnidadeMedida": "UN",
+				"Quantidade": 6.0,
+				"ValorUnitario": 5.0
+			},
+			{
+				"CodigoPDV": "2",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "117",
+				"UnidadeMedida": "UN",
+				"Quantidade": 39.0,
+				"ValorUnitario": 5.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "4",
+				"UnidadeMedida": "UN",
+				"Quantidade": 3.0,
+				"ValorUnitario": 30.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "168",
+				"UnidadeMedida": "UN",
+				"Quantidade": 2.0,
+				"ValorUnitario": 9.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "120",
+				"UnidadeMedida": "UN",
+				"Quantidade": 2.0,
+				"ValorUnitario": 5.0
+			},
+			{
+				"CodigoPDV": "2",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "120",
+				"UnidadeMedida": "UN",
+				"Quantidade": 7.0,
+				"ValorUnitario": 5.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "88",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 30.0
+			},
+			{
+				"CodigoPDV": "2",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "129",
+				"UnidadeMedida": "UN",
+				"Quantidade": 4.0,
+				"ValorUnitario": 6.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "60",
+				"UnidadeMedida": "UN",
+				"Quantidade": 4.0,
+				"ValorUnitario": 20.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "8",
+				"UnidadeMedida": "UN",
+				"Quantidade": 6.0,
+				"ValorUnitario": 7.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "71",
+				"UnidadeMedida": "UN",
+				"Quantidade": 6.0,
+				"ValorUnitario": 13.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "122",
+				"UnidadeMedida": "UN",
+				"Quantidade": 2.0,
+				"ValorUnitario": 40.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "253",
+				"UnidadeMedida": "UN",
+				"Quantidade": 5.0,
+				"ValorUnitario": 50.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "266",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 8.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "590",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 9.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "1005",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 25.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "963",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 68.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "854",
+				"UnidadeMedida": "UN",
+				"Quantidade": 2.0,
+				"ValorUnitario": 5.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "147",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 8.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "665",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 23.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "0508",
+				"UnidadeMedida": "UN",
+				"Quantidade": 2.0,
+				"ValorUnitario": 8.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "05012",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 18.0
+			},
+			{
+				"CodigoPDV": "1",
+				"EmissordoCupom": "Restaurante 365 CBA",				
+				"CodigoExterno": "05015",
+				"UnidadeMedida": "UN",
+				"Quantidade": 1.0,
+				"ValorUnitario": 27.0
+			}
+		]
+	}
+}
