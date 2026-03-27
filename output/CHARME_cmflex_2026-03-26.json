@@ -6,8 +6,8 @@
 	"ConteudoCompactado": false,
 	"MensagemDoSolicitante": "IncluirProcVendaParaBaixaEstoque",
 	"DataDoMovimento": "2026-03-26",
-	"CodigoDaEmpresa": "",
-	"ChaveDeAcesso": "",
+	"CodigoDaEmpresa": "POSCHARME1",
+	"ChaveDeAcesso": "e571440f-b0c3-4d69-972b-c506cc97e29c",
 	"Vendas": {
 		"Venda": [
 			{
