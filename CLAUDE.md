@@ -35,6 +35,7 @@ A visão é que **tudo está conectado**: um chamado de manutenção pode explic
 - **NF-e XMLs (SMB)** — XMLs enviados ao fiscal, lidos dos shares `\\10.197.0.51\{Hotel}` (implementado)
 - **FISCAL (CMERP)** — lançamentos fiscais por empresa/hotel (via API HTTP, `idExportacao=80`, implementado)
 - **SEFAZ** — XMLs de NF-e/NFC-e autorizadas (via share de rede `\\10.197.1.3\Arquivos$\Sefaz` — em implementação)
+- **GCM Simphony** — relatório de vendas detalhadas por item de linha (via SFTP, arquivos JSON diários `{Hotel}GCM_{YYYY-MM-DD}.json`, implementado)
 
 **Banco de produção**: PostgreSQL em `10.197.3.2`, schema `carmel`
 
@@ -242,6 +243,8 @@ Para tarefas específicas, consulte os documentos em `skills/`:
 | `skills/fiscal_db.md` | Escrever queries sobre lançamentos fiscais, mapeamento FKEMPRESA→hotel, view consolidada |
 | `skills/fiscal_etl.md` | Entender API CMERP, headers, parametros, chunking, comandos sync e histórico |
 | `skills/vendas_db.md` | Escrever queries sobre vendas consolidadas, lógica de status, views v_vendas_notas e v_vendas_diario |
+| `skills/gcm_etl.md` | Entender estrutura JSON GCM, SFTP, comandos sync e export CMFlex |
+| `skills/gcm_db.md` | Escrever queries sobre gcm_raw_line_items, filtros por orderType, conciliação |
 
 ---
 
@@ -282,3 +285,15 @@ R: `python -m etls.fiscal.history_sync 2026-02-01 2026-03-15` — itera em chunk
 
 **P: Como o Fiscal se liga ao NF-e?**
 R: `v_fiscal_lancamentos` faz o join via `nNF + serie + hotel`. Match de ~96% para o período com dados de NF-e (jan/2026 em diante). O campo `chave_nfe` traz a chave de 44 dígitos quando o XML existe.
+
+**P: Como sincronizar o GCM (Guest Check Management) do Simphony?**
+R: `python -m etls.gcm.sync 2026-03-26` — baixa todos os arquivos `{Hotel}GCM_{YYYY-MM-DD}.json` do SFTP (mesmas credenciais PDV) e persiste em `gcm_raw_line_items`. Sem argumento, sincroniza o dia anterior.
+
+**P: Como fazer backfill do GCM?**
+R: `python -m etls.gcm.history_sync 2026-01-01 2026-03-26` — itera dia a dia com uma única conexão SFTP.
+
+**P: Como gerar o XML CMFlex de Consumo Interno?**
+R: `python -m etls.gcm.cmflex_export 2026-03-26` — consulta o banco, filtra `orderTypeName = 'Consumo Interno'`, agrupa por comanda e gera `output/{hotel}_cmflex_{data}.xml` para cada hotel com dados. Para só um hotel: `python -m etls.gcm.cmflex_export 2026-03-26 CARM`.
+
+**P: O que é preciso configurar para o export CMFlex funcionar?**
+R: Adicionar em `auth/prod/.env` as variáveis `GCM_ECF_SERIAL_CARM`, `GCM_ECF_SERIAL_CUMBUCO`, `GCM_ECF_SERIAL_TAIBA`, `GCM_ECF_SERIAL_MAGN` com os seriais ECF de cada hotel no CMFlex. Sem elas o fallback é `ECF_{locationRef}`.

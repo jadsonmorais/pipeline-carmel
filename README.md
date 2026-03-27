@@ -23,6 +23,10 @@ Fiscal CMERP API   ──────►  etls/fiscal/      ──────�
 
 SEFAZ NF-e         ──────►  etls/sefaz/       ──────►  (em implementação)
 (share rede XML)
+
+GCM Simphony       ──────►  etls/gcm/         ──────►  gcm_raw_line_items
+(SFTP JSON diário)           sync.py                    (PK = guestCheckLineItemID)
+                             cmflex_export.py           output/{hotel}_cmflex_{data}.xml
 ```
 
 **Princípio**: dados brutos armazenados integralmente como JSONB (sem transformação nas tabelas raw). Toda lógica de negócio fica em views SQL reutilizáveis por qualquer ferramenta de consumo.
@@ -62,9 +66,16 @@ infraspeak/
 │   │   ├── sync.py              ← sync dos últimos 7 dias (entry point)
 │   │   └── history_sync.py      ← backfill por intervalo (chunks de 30 dias)
 │   │
-│   └── sefaz/                   ← ETL NF-e SEFAZ (em implementação)
-│       ├── parser.py            ← parser XML NF-e/NFC-e
-│       └── sync.py              ← entry point
+│   ├── sefaz/                   ← ETL NF-e SEFAZ (em implementação)
+│   │   ├── parser.py            ← parser XML NF-e/NFC-e
+│   │   └── sync.py              ← entry point
+│   │
+│   └── gcm/                     ← ETL GCM Simphony (relatório de vendas por item)
+│       ├── sftp.py              ← cliente SFTP (mesmas credenciais PDV_SFTP_*)
+│       ├── parser.py            ← parse dos JSONs GCM, extrai line items
+│       ├── sync.py              ← sync diário (entry point), default = ontem
+│       ├── history_sync.py      ← backfill por intervalo de datas
+│       └── cmflex_export.py     ← gera XML CMFlex para Consumo Interno
 │
 ├── skills/
 │   ├── infraspeak_db.md         ← referência do banco Infraspeak: tabelas, views, JSONB, queries
@@ -73,7 +84,9 @@ infraspeak/
 │   ├── pdv_db.md                ← referência do banco PDV: tabela, JSONB paths, views, queries
 │   ├── pdv_etl.md               ← referência do pipeline PDV: SFTP, estrutura JSON, comandos
 │   ├── nfe_db.md                ← referência da tabela nfe_raw_xmls, queries de conciliação
-│   └── nfe_etl.md               ← referência do ETL NF-e: shares SMB, parser XML, comandos
+│   ├── nfe_etl.md               ← referência do ETL NF-e: shares SMB, parser XML, comandos
+│   ├── gcm_db.md                ← referência da tabela gcm_raw_line_items, queries por orderType
+│   └── gcm_etl.md               ← referência do ETL GCM: estrutura JSON, SFTP, export CMFlex
 │
 ├── db/
 │   └── build.sql                ← DDL completo: tabelas, views, schema carmel
@@ -302,6 +315,8 @@ Para detalhes aprofundados, consulte os documentos em `skills/`:
 **NF-e XMLs (SMB)**
 - [skills/nfe_db.md](skills/nfe_db.md) — tabela nfe_raw_xmls, JSONB paths, queries de conciliação com PDV
 - [skills/nfe_etl.md](skills/nfe_etl.md) — shares SMB, parser XML, variáveis de ambiente, comandos
+- [skills/gcm_db.md](skills/gcm_db.md) — tabela gcm_raw_line_items, queries por orderType, conciliação
+- [skills/gcm_etl.md](skills/gcm_etl.md) — estrutura JSON GCM, SFTP, comandos sync e export CMFlex
 
 **Fiscal CMERP**
 - [skills/fiscal_db.md](skills/fiscal_db.md) — tabela fiscal_raw_lancamentos, campos JSONB, queries úteis
