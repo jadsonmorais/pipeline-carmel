@@ -5,9 +5,8 @@ from dotenv import load_dotenv
 import psycopg2
 from psycopg2.extras import execute_values
 
-FILE_AUTH_PROD = Path(__file__).parent.parent / 'auth' / 'prod' / '.env'
-FILE_AUTH_TEST = Path(__file__).parent.parent / 'auth' / 'test' / '.env'
-FILE_AUTH = FILE_AUTH_PROD
+_env = os.getenv("PIPELINE_ENV", "prod")
+FILE_AUTH = Path(__file__).parent.parent / 'auth' / _env / '.env'
 load_dotenv(FILE_AUTH)
 
 

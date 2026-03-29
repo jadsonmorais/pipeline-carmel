@@ -50,6 +50,8 @@ CREATE TABLE IF NOT EXISTS carmel.nfe_raw_cancelamentos (
 -- ------------------------------------------------------------------------------
 
 -- Fiscal: join pesado materializado para performance (~198k lançamentos × ~41k XMLs)
+-- Join primário: ANCHAVE (chave SEFAZ 44 dígitos retornada diretamente pela API CMERP)
+-- Join fallback: nNF + série + hotel (registros históricos anteriores à adição do ANCHAVE na API)
 -- Criada com WITH NO DATA; o ETL faz o primeiro REFRESH após carga inicial
 CREATE MATERIALIZED VIEW IF NOT EXISTS carmel.mv_fiscal_lancamentos AS
 SELECT
@@ -73,22 +75,37 @@ SELECT
     (f.data->>'VLVALORTOTAL')::NUMERIC(12,2)          AS valor_total_item,
     (f.data->>'VALORDESCONTO')::NUMERIC(12,2)         AS desconto,
     (f.data->>'VLVALORTTDOCUMENTO')::NUMERIC(12,2)    AS valor_total_documento,
-    -- NF-e (join por número + série + hotel → traz chave 44 dígitos e status SEFAZ)
-    n.nota_id                                         AS chave_nfe,
-    n.data->>'cStat'                                  AS status_sefaz,   -- 100=autorizada
-    n.data->>'nProt'                                  AS protocolo_sefaz,
-    (n.data->>'dhRecbto')::timestamptz                AS recebimento_sefaz,
+    -- Chave SEFAZ direta retornada pela API (disponível a partir de 2026-03)
+    -- Permite join direto com nfe_raw_xmls.nota_id e pdv_raw_notas.nota_id
+    f.data->>'ANCHAVE'                                AS chave_sefaz_raw,
+    -- NF-e: join primário por ANCHAVE; fallback por número + série + hotel
+    COALESCE(n_direct.nota_id,   n_composite.nota_id)                   AS chave_nfe,
+    COALESCE(n_direct.data->>'cStat',   n_composite.data->>'cStat')     AS status_sefaz,
+    COALESCE(n_direct.data->>'nProt',   n_composite.data->>'nProt')     AS protocolo_sefaz,
+    COALESCE(
+        (n_direct.data->>'dhRecbto')::timestamptz,
+        (n_composite.data->>'dhRecbto')::timestamptz
+    )                                                 AS recebimento_sefaz,
     -- EXISTS evita fan-out quando há múltiplos cancelamentos para o mesmo nota_id
     EXISTS (
         SELECT 1 FROM carmel.nfe_raw_cancelamentos can
-        WHERE can.data->>'chNFe' = n.nota_id
+        WHERE can.data->>'chNFe' = COALESCE(n_direct.nota_id, n_composite.nota_id)
     )                                                 AS cancelada,
     f.extracted_at
 FROM carmel.fiscal_raw_lancamentos f
+-- Join primário: chave SEFAZ direta (ANCHAVE) — registros com API atualizada
 LEFT JOIN LATERAL (
     SELECT nota_id, data
     FROM carmel.nfe_raw_xmls
-    WHERE data->>'nNF'   = f.data->>'ANNUMERODOCUMENTO'
+    WHERE nota_id = NULLIF(f.data->>'ANCHAVE', '')
+    LIMIT 1
+) n_direct ON true
+-- Join fallback: número + série + hotel — registros históricos sem ANCHAVE
+LEFT JOIN LATERAL (
+    SELECT nota_id, data
+    FROM carmel.nfe_raw_xmls
+    WHERE n_direct.nota_id IS NULL
+      AND data->>'nNF'   = f.data->>'ANNUMERODOCUMENTO'
       AND data->>'serie' = f.data->>'ANSERIE'
       AND data->>'hotel' = CASE f.data->>'FKEMPRESA'
           WHEN '1' THEN 'TAIBA'
@@ -97,7 +114,7 @@ LEFT JOIN LATERAL (
           WHEN '4' THEN 'MAGNA'
       END
     LIMIT 1
-) n ON true
+) n_composite ON true
 WITH NO DATA;
 
 -- Índice único necessário para REFRESH MATERIALIZED VIEW CONCURRENTLY (uso futuro)
@@ -105,7 +122,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_fiscal_lancamentos_pk
     ON carmel.mv_fiscal_lancamentos (lancamento_id);
 
 -- Fiscal: wrapper fino sobre a MV — mantém compatibilidade com todo código existente
--- Uma linha por item/lançamento; join com nfe_raw_xmls via nNF + serie + hotel
+-- Uma linha por item/lançamento; join com nfe_raw_xmls via ANCHAVE (primário) ou nNF + serie + hotel (fallback)
 CREATE OR REPLACE VIEW carmel.v_fiscal_lancamentos AS
 SELECT * FROM carmel.mv_fiscal_lancamentos;
 
@@ -276,6 +293,9 @@ CREATE INDEX IF NOT EXISTS idx_pdv_raw_notas_hotel
 
 CREATE INDEX IF NOT EXISTS idx_fiscal_raw_lancamentos_numero_serie_empresa
     ON carmel.fiscal_raw_lancamentos ((data->>'ANNUMERODOCUMENTO'), (data->>'ANSERIE'), (data->>'FKEMPRESA'));
+
+CREATE INDEX IF NOT EXISTS idx_fiscal_raw_lancamentos_anchave
+    ON carmel.fiscal_raw_lancamentos ((data->>'ANCHAVE'));
 
 CREATE INDEX IF NOT EXISTS idx_nfe_raw_cancelamentos_chave
     ON carmel.nfe_raw_cancelamentos ((data->>'chNFe'));

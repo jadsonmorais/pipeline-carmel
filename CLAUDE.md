@@ -171,6 +171,8 @@ API HTTP que retorna lançamentos fiscais por empresa/hotel via export parametri
 
 **PK**: `IDLANCAMENTOICMSBASE` → `lancamento_id` na tabela `fiscal_raw_lancamentos`.
 
+**Campo ANCHAVE** (adicionado 2026-03): chave de acesso NF-e 44 dígitos retornada diretamente no payload. FK direta para `nfe_raw_xmls.nota_id` e `pdv_raw_notas.nota_id`. Capturado automaticamente pelo JSONB; usado como join primário na `mv_fiscal_lancamentos`.
+
 **Variáveis de ambiente**: `CLIENT-ID`, `CLIENT-SECRET`, `EMPRESA-IDS`, `USUARIO-ID`
 
 ---
@@ -284,7 +286,7 @@ R: `python -m etls.fiscal.sync` — busca os últimos 7 dias (janela deslizante)
 R: `python -m etls.fiscal.history_sync 2026-02-01 2026-03-15` — itera em chunks de 30 dias. Erros por chunk são logados e o processo continua.
 
 **P: Como o Fiscal se liga ao NF-e?**
-R: `v_fiscal_lancamentos` faz o join via `nNF + serie + hotel`. Match de ~96% para o período com dados de NF-e (jan/2026 em diante). O campo `chave_nfe` traz a chave de 44 dígitos quando o XML existe.
+R: `v_fiscal_lancamentos` usa join duplo. **Primário**: `ANCHAVE` (campo retornado diretamente pela API CMERP desde 2026-03) = `nfe_raw_xmls.nota_id` — join exato pela chave SEFAZ 44 dígitos. **Fallback**: `nNF + serie + hotel` para registros históricos sem `ANCHAVE`. O campo `chave_nfe` traz a chave resolvida; `chave_sefaz_raw` expõe o `ANCHAVE` bruto do fiscal (null se registro anterior à mudança da API). Re-rodar `history_sync` preenche `ANCHAVE` em registros antigos.
 
 **P: Como sincronizar o GCM (Guest Check Management) do Simphony?**
 R: `python -m etls.gcm.sync 2026-03-26` — baixa todos os arquivos `{Hotel}GCM_{YYYY-MM-DD}.json` do SFTP (mesmas credenciais PDV) e persiste em `gcm_raw_line_items`. Sem argumento, sincroniza o dia anterior.

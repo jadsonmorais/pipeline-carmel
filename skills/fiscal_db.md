@@ -45,6 +45,7 @@ Campos retornados pelo export `idExportacao=80` da API CMERP:
 | `NUMEROCARACTERESCONTA`    | number   | Número de caracteres (conta)                       |
 | `INICIOMESA`               | number   | Offset (mesa)                                      |
 | `NUMEROCARACTERESMESA`     | number   | Número de caracteres (mesa)                        |
+| `ANCHAVE`                  | string   | **Chave de acesso NF-e 44 dígitos** — disponível a partir de 2026-03; FK direta para `nfe_raw_xmls.nota_id` e `pdv_raw_notas.nota_id` |
 
 ---
 
@@ -71,7 +72,8 @@ Atualizada automaticamente pelo ETL fiscal (`sync.py` e `history_sync.py`) via `
 
 Wrapper fino sobre `mv_fiscal_lancamentos` — definida como `SELECT * FROM carmel.mv_fiscal_lancamentos`. Mantém compatibilidade total com todo código existente (`v_vendas_notas`, `v_vendas_diario`, queries ad-hoc).
 
-**Join com NF-e**: `nNF + serie + hotel` → `nfe_raw_xmls` (traz `nota_id`, `cStat`, `nProt`, `dhRecbto`)
+**Join com NF-e (primário)**: `ANCHAVE` → `nfe_raw_xmls.nota_id` — join direto pela chave SEFAZ 44 dígitos (registros com API atualizada, a partir de 2026-03)
+**Join com NF-e (fallback)**: `nNF + serie + hotel` → `nfe_raw_xmls` — para registros históricos sem `ANCHAVE`
 **Join com cancelamentos**: via `nota_id` → indica se a nota foi cancelada.
 
 Colunas principais:
@@ -93,7 +95,8 @@ Colunas principais:
 | `valor_total_item`      | Valor total do item                            |
 | `desconto`              | Desconto aplicado                              |
 | `valor_total_documento` | Valor total da NF (repete em todos os itens)   |
-| `chave_nfe`             | Chave 44 dígitos (via join NF-e XMLs)          |
+| `chave_sefaz_raw`       | ANCHAVE direto do fiscal (null se API antiga)  |
+| `chave_nfe`             | Chave 44 dígitos resolvida (join primário ou fallback) |
 | `status_sefaz`          | 100=autorizada (via join NF-e XMLs)            |
 | `protocolo_sefaz`       | Protocolo de autorização                       |
 | `recebimento_sefaz`     | Data/hora de recebimento na SEFAZ              |
